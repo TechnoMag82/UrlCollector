@@ -1,0 +1,30 @@
+URL Collector 1.1
+=================
+Last update : 31 january 2010
+
+
+AUTHOR
+======
+    Kobzev Iliya aka TechnoMag (vendor7@yandex.ru)
+
+DESCRIPTION
+===========
+    Program for create text-based DB of web links. Based on Qt 4.4
+
+MAKE PROGRAM FROM SOURCE
+========================
+    Project for make program is ready!
+    You must only run "make" command in source directory for create binary file!
+
+CONTACTS
+========
+    http:://sourceforge.net/users/technomag
+
+LICENSE:
+========
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License;
+
+**************
+Copyright (C) 31 january 2010
+**************

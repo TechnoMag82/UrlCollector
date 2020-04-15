@@ -1,0 +1,20 @@
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+     <file>images/mainwindow.png</file>
+     <file>images/text-html.png</file>
+     <file>images/bookmark-new.png</file>
+     <file>images/application-exit.png</file>
+     <file>images/accessories-text-editor.png</file>
+     <file>images/help-about.png</file>
+     <file>images/list-add.png</file>
+     <file>images/list-remove.png</file>
+     <file>images/edit-find.png</file>
+     <file>images/go-jump.png</file>
+     <file>images/toolbar/list-add.png</file>
+     <file>images/toolbar/list-remove.png</file>
+     <file>images/toolbar/go-jump.png</file>
+     <file>images/toolbar/edit-find.png</file>
+     <file>images/toolbar/accessories-text-editor.png</file>
+     <file>images/toolbar/emblem-favorite.png</file>
+ </qresource>
+ </RCC>
