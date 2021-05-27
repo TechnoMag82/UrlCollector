@@ -16,7 +16,7 @@ class OptionsDialog : public QDialog
 {
 	Q_OBJECT
 	public:
-		OptionsDialog(QWidget *parent = 0);
+        OptionsDialog(QWidget *parent = 0, QString browser = "", QString pathDb = "");
 		QLineEdit *editDefBrowser;
     	QLineEdit *editPathToDB;
 	private slots:

@@ -1,9 +1,6 @@
-
-
 #include "optionsdialog.h"
-//#include "mainwindow.h"
 
-OptionsDialog::OptionsDialog(QWidget *parent)
+OptionsDialog::OptionsDialog(QWidget *parent, QString browser, QString pathDb)
 	: QDialog(parent)
 {
 	setFixedSize(377, 184);
@@ -30,10 +27,12 @@ OptionsDialog::OptionsDialog(QWidget *parent)
     editDefBrowser->setObjectName(QString::fromUtf8("editDefBrowser"));
     editDefBrowser->setGeometry(QRect(10, 30, 251, 29));
     editDefBrowser->setReadOnly(true);
+    editDefBrowser->setText(browser);
     editPathToDB = new QLineEdit(this);
     editPathToDB->setObjectName(QString::fromUtf8("editPathToDB"));
     editPathToDB->setGeometry(QRect(10, 80, 251, 29));
     editPathToDB->setReadOnly(true);
+    editPathToDB->setText(pathDb);
     label = new QLabel(this);
     label->setObjectName(QString::fromUtf8("label"));
     label->setGeometry(QRect(10, 10, 181, 19));
@@ -46,34 +45,30 @@ OptionsDialog::OptionsDialog(QWidget *parent)
     browse2->setText(tr("Browse ..."));
     label->setText(tr("Default web-browser:"));
     label_2->setText(tr("Path to database:"));
-    
-//    MainWindow * mw = static_cast<MainWindow*>(parent);
-//    editDefBrowser->setText(mw->strDefBrowser);
-//    editPathToDB->setText(mw->strPathToDB);
 }
 
 void OptionsDialog::browseFile()
 {
-	if (this->sender()==browse2)
-		editPathToDB->setText(QFileDialog::getSaveFileName(this, tr("Select file of BataBase"), "/home", "Data Base Of URL's (*.ucl)"));
-	if (this->sender()==browse1)
-		editDefBrowser->setText(QFileDialog::getOpenFileName(this, tr("Select default browser"), "/home", "All files (*)"));
+    if (this->sender() == browse2) {
+        QString path = QFileDialog::getOpenFileName(this, tr("Select file of BataBase"), "/home", "Data Base Of URL's (*.ucl)");
+        if (!path.isEmpty())
+            editPathToDB->setText(path);
+    }
+    if (this->sender() == browse1) {
+        QString path = QFileDialog::getOpenFileName(this, tr("Select default browser"), "/home", "All files (*)");
+        if (!path.isEmpty())
+            editDefBrowser->setText(path);
+    }
 }
 
 void OptionsDialog::okButton()
 {
-	if (editDefBrowser->text().length()!=0 && editPathToDB->text().length()!=0)
-	{
-		if (QFile::exists(editPathToDB->text())==false) // если файл не существует то создаем пустую базу
-			{
-				QFile file(editPathToDB->text());
-				file.open(QIODevice::WriteOnly | QIODevice::Text);
-				QMessageBox::information(this, "Options.", "Created new DataBese!", QMessageBox::Ok);
-			}
+    if (QFile::exists(editPathToDB->text()) == true) {
 		accept();
-	}
-		else
-		QMessageBox::warning(this, tr("Edit program Options.") ,
-		tr("You must select default web-browser and path to database of URL's!"),
-		QMessageBox::Ok);
+    } else {
+        QMessageBox::warning(this,
+                             tr("Edit program Options"),
+                             tr("You must select database!"),
+                             QMessageBox::Ok);
+    }
 }

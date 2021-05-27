@@ -13,3 +13,5 @@ TARGET = UrlCol
 HEADERS += addurl.h mainwindow.h weburl.h optionsdialog.h
 SOURCES += addurl.cpp main.cpp mainwindow.cpp weburl.cpp optionsdialog.cpp
 RESOURCES += urlcol.qrc
+
+TRANSLATIONS += main_ru.ts

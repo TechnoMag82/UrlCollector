@@ -2,8 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QVector>
-#include <QVectorIterator>
+#include <QList>
 #include <QToolButton>
 #include <QDir>
 #include <QFile>
@@ -32,7 +31,8 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 	public:
 		MainWindow();
-		QVector <weburl* > classUrl;
+        QList <weburl* > classUrl;
+        QList <weburl* > searchClassUrl;
 		QString strDefBrowser;
 		QString strPathToDB;
 	protected:
@@ -46,10 +46,12 @@ class MainWindow : public QMainWindow
 		void Options();
 		void setSearchFocus();
 		void showFavorites();
-		void getDBItem(const QString text);
+		void searchInDB(const QString text);
 		void initApp();
+        void createDatabase();
 	private:
 		QMenu *menuUrl;
+            QAction *actNewDatabase;
 			QAction *actOpenUrl;
 			QAction *actOpenUrlWith;
 			QAction *actAddUrl;
@@ -87,12 +89,18 @@ class MainWindow : public QMainWindow
 		bool loadDB();
 		void saveDB();
 		void addItemToList();
-			void _addItem(Qt::CheckState favorite, QString link, QString info, bool gui);
+        void _addItem(bool favorite, weburl *url, bool gui);
+        void addWidgetItem(bool favorite, QString text);
 		void refreshItem();
-		//void clearListItems();
-		
+        void clearListItems();
+
+        void selectBrowser(QStringList args);
+        void resetList();
+
 		QString homeDir;
 		bool dataEdited;
+        bool isSearching = false;
+        void setItemFavorite(bool favorite, QListWidgetItem *newItem);
 };
 
 #endif

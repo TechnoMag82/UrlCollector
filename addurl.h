@@ -16,11 +16,11 @@ class AddUrl : public QDialog
 {
 	Q_OBJECT	
 	public:
-		AddUrl( QWidget *parent = 0, bool edit=false, int curRow=-1);
+        AddUrl( QWidget *parent = 0, bool edit=false, weburl *url = 0);
 		// edit=true открыт диалог для редактирвания ссылки, edit=false - для добавления ссылки
 		// curRow - текущая выделенная ссылка в списке
 	public:
-		QLineEdit *weburl;
+        QLineEdit *editWeburl;
 		QTextEdit *infourl;
 		QCheckBox *chkFavorite;
 	private slots:
