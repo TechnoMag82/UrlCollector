@@ -1,12 +1,15 @@
 #include "optionsdialog.h"
 
-OptionsDialog::OptionsDialog(QWidget *parent, QString browser, QString pathDb)
+OptionsDialog::OptionsDialog(QWidget *parent,
+                             QString browser,
+                             QString pathDb,
+                             bool monitoringClipboard)
 	: QDialog(parent)
 {
-	setFixedSize(377, 184);
+    setFixedSize(377, 220);
     buttonBox = new QDialogButtonBox(this);
     buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
-    buttonBox->setGeometry(QRect(20, 130, 341, 32));
+    buttonBox->setGeometry(QRect(20, 170, 341, 32));
     buttonBox->setOrientation(Qt::Horizontal);
     buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
     
@@ -40,6 +43,11 @@ OptionsDialog::OptionsDialog(QWidget *parent, QString browser, QString pathDb)
     label_2->setObjectName(QString::fromUtf8("label_2"));
     label_2->setGeometry(QRect(10, 60, 241, 19));
     
+    chkMonitoringClipboard = new QCheckBox(tr("Monitoring clipboard"), this);
+    chkMonitoringClipboard->setToolTip(tr("Turn ON monotoring clipboard for automatically add URL to database"));
+    chkMonitoringClipboard->setGeometry(QRect(10, 130, 280, 24));
+    chkMonitoringClipboard->setChecked(monitoringClipboard);
+
     setWindowTitle(tr("Options"));
     browse1->setText(tr("Browse ..."));
     browse2->setText(tr("Browse ..."));

@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 
-const QString PROGRAM_NAME="URLCollector v1.3";
+const QString PROGRAM_NAME="URLCollector v1.4";
 const QString PROGRAM_DIR="/.urlcol";
 const QString PROGRAM_CONFIG="/.urlcol/url.config";
 
@@ -32,6 +32,7 @@ MainWindow::MainWindow()
 	createStatusBar();
 	createDocWindows();
 	QTimer::singleShot(0, this, SLOT(initApp()));
+    initMonitoringClipboard();
 }
 
 void MainWindow::initApp()
@@ -56,6 +57,29 @@ void MainWindow::createDatabase()
                                  tr("Options"),
                                  tr("Created new DataBese!"),
                                  QMessageBox::Ok);
+    }
+}
+
+void MainWindow::clipboardChanged()
+{
+    if (boolMonitoringClipboard == false) {
+        return;
+    }
+
+    if(board->text().isEmpty()) {
+        return;
+    }
+
+    if (oldClipboard != board->text() &&
+        (board->text().startsWith("https://") ||
+         board->text().startsWith("http://") ||
+         board->text().startsWith("www.")
+        ))
+    {
+        qDebug() << "datachanged:" <<  board->text();
+        oldClipboard = board->text();
+        _addItem(false, new weburl(false, board->text(), tr("Added automatically")), false);
+        dataEdited = true;
     }
 }
 
@@ -128,6 +152,8 @@ void MainWindow::gotoUrl() // открываем браузер с ссылко�
 
 void MainWindow::searchInDB(const QString text) // метод поиска первого эл-та с подстрокой text
 {
+    if (strPathToDB.isEmpty())
+        return;
     if (text.isEmpty()) {
         resetList();
     }
@@ -237,6 +263,9 @@ void MainWindow::readSettings() // считываем настройки про�
 		QTextStream inText(&textFile);
         strDefBrowser = inText.readLine(0);
         strPathToDB = inText.readLine(0);
+        QString strMonitoringClipboard = inText.readLine(0);
+        if (strMonitoringClipboard == "1")
+            boolMonitoringClipboard = true;
         loadDB();
     } else {
 		Options(); // если конфига нет, то открываем диалог настроек программы
@@ -251,16 +280,18 @@ void MainWindow::saveSettings() // сохраняем настройки про�
     outText.setCodec("UFT-8");
     outText << strDefBrowser << endl;
     outText << strPathToDB << endl;
+    outText << boolMonitoringClipboard << endl;
     dataEdited = false;
 }
 
 void MainWindow::Options() // открываем диалог настройек
 {
-    OptionsDialog dialog(this, strDefBrowser, strPathToDB);
+    OptionsDialog dialog(this, strDefBrowser, strPathToDB, boolMonitoringClipboard);
     if (dialog.exec() == QDialog::Accepted)
 	{
-        strDefBrowser = dialog.editDefBrowser->text();
-        strPathToDB = dialog.editPathToDB->text();
+        strDefBrowser = dialog.defaultBrowser();
+        strPathToDB = dialog.pathToDb();
+        boolMonitoringClipboard = dialog.monitoringClipboard();
 		QDir dir(homeDir);
         if (dir.exists(homeDir + PROGRAM_DIR)) {
 			saveSettings();
@@ -408,6 +439,7 @@ void MainWindow::saveDB() // сохраняем базу ссылок
 			
 			outDB << "info: " << endl << classUrl[i]->info() << endl << "endinfo." << endl;
 		}
+        textDB.close();
 	}
 }
 
@@ -437,6 +469,12 @@ void MainWindow::setItemFavorite(bool favorite, QListWidgetItem *newItem) // н�
     }
 }
 
+void MainWindow::initMonitoringClipboard()
+{
+    board = QGuiApplication::clipboard();
+    connect(board, &QClipboard::dataChanged, this, &MainWindow::clipboardChanged, Qt::DirectConnection);
+}
+
 void MainWindow::addWidgetItem(bool favorite, QString text) // добавляем виджет эелмента в список
 {
     QListWidgetItem *newItem = new QListWidgetItem;
@@ -447,16 +485,23 @@ void MainWindow::addWidgetItem(bool favorite, QString text) // добавляе�
 
 void MainWindow::addItemToList() // добавляем ссылку в список
 {
-    resetList(); // вернемся к исходному списку
-    AddUrl dialog(this, false, nullptr);
-    if (dialog.exec() == QDialog::Accepted)
-	{
-		QString temp;
-        weburl *url = new weburl(dialog.chkFavorite->checkState(), dialog.editWeburl->text(), dialog.infourl->toPlainText());
-        _addItem(dialog.chkFavorite->checkState(), url, false);
-		setWindowTitle( PROGRAM_NAME + " - elements in DB " + temp.setNum(classUrl.count(), 10) );
-        dataEdited = true;
-	}
+    if (!strPathToDB.isEmpty()) {
+        resetList(); // вернемся к исходному списку
+        AddUrl dialog(this, false, nullptr);
+        if (dialog.exec() == QDialog::Accepted)
+        {
+            QString temp;
+            weburl *url = new weburl(dialog.isFavorite(), dialog.webUrl(), dialog.infoUrl());
+            _addItem(dialog.isFavorite(), url, false);
+            setWindowTitle( PROGRAM_NAME + " - elements in DB " + temp.setNum(classUrl.count(), 10) );
+            dataEdited = true;
+        }
+    } else {
+        QMessageBox::critical(this,
+                              tr("Edit database"),
+                              tr("Database is not opened!"),
+                              QMessageBox::Ok);
+    }
 }
 
 void MainWindow::refreshItem() // обновляем измененный элемент списка
@@ -469,13 +514,13 @@ void MainWindow::refreshItem() // обновляем измененный эле
             url = searchClassUrl[urlList->currentRow()];
         }
         AddUrl dialog(this, true, url);
-		if (dialog.exec())
+        if (dialog.exec() == QDialog::Accepted)
 		{
-            url->setLink(dialog.editWeburl->text());
-            url->setInfo(dialog.infourl->toPlainText());
-            url->setFavorite(dialog.chkFavorite->isChecked());
+            url->setLink(dialog.webUrl());
+            url->setInfo(dialog.infoUrl());
+            url->setFavorite(dialog.isFavorite());
 			QListWidgetItem *curItem = urlList->currentItem();
-            curItem->setText(dialog.editWeburl->text());
+            curItem->setText(dialog.webUrl());
             setItemFavorite(url->isFavorite(), curItem);
             urlInfo->setPlainText(url->info());
             dataEdited = true;

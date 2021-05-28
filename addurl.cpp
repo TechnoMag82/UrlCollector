@@ -23,7 +23,7 @@ AddUrl::AddUrl(QWidget *parent, bool edit, weburl *url)
     infourl->setTabChangesFocus(true);
     infourl->setWordWrapMode(QTextOption::WordWrap);
     chkFavorite = new QCheckBox(tr("Is favorite!"), this);
-    chkFavorite->setGeometry(QRect(10, 160, 100, 18));
+    chkFavorite->setGeometry(QRect(10, 160, 150, 18));
     label = new QLabel(this);
     label->setObjectName(QString::fromUtf8("label"));
     label->setGeometry(QRect(10, 10, 57, 19));

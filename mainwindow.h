@@ -31,10 +31,6 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 	public:
 		MainWindow();
-        QList <weburl* > classUrl;
-        QList <weburl* > searchClassUrl;
-		QString strDefBrowser;
-		QString strPathToDB;
 	protected:
 		void closeEvent(QCloseEvent *event);
 	private slots:
@@ -49,6 +45,7 @@ class MainWindow : public QMainWindow
 		void searchInDB(const QString text);
 		void initApp();
         void createDatabase();
+        void clipboardChanged();
 	private:
 		QMenu *menuUrl;
             QAction *actNewDatabase;
@@ -89,18 +86,30 @@ class MainWindow : public QMainWindow
 		bool loadDB();
 		void saveDB();
 		void addItemToList();
-        void _addItem(bool favorite, weburl *url, bool gui);
+        void _addItem(bool favorite, weburl *url, bool isSearching);
         void addWidgetItem(bool favorite, QString text);
 		void refreshItem();
         void clearListItems();
 
         void selectBrowser(QStringList args);
         void resetList();
+        void setItemFavorite(bool favorite, QListWidgetItem *newItem);
+        void initMonitoringClipboard();
+
+        QList <weburl* > classUrl;
+        QList <weburl* > searchClassUrl;
+
+        // Options
+        QString strDefBrowser;
+        QString strPathToDB;
+        bool boolMonitoringClipboard = false;
+
+        QClipboard *board = nullptr;
+        QString oldClipboard;
 
 		QString homeDir;
 		bool dataEdited;
         bool isSearching = false;
-        void setItemFavorite(bool favorite, QListWidgetItem *newItem);
 };
 
 #endif
