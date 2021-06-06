@@ -10,8 +10,10 @@ TARGET = UrlCol
 #INCLUDEPATH += .
 
 # Input
-HEADERS += addurl.h mainwindow.h weburl.h optionsdialog.h
-SOURCES += addurl.cpp main.cpp mainwindow.cpp weburl.cpp optionsdialog.cpp
+HEADERS += addurl.h mainwindow.h weburl.h optionsdialog.h \
+    tagsdialog.h
+SOURCES += addurl.cpp main.cpp mainwindow.cpp weburl.cpp optionsdialog.cpp \
+    tagsdialog.cpp
 RESOURCES += urlcol.qrc
 
 TRANSLATIONS += main_ru.ts

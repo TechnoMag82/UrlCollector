@@ -15,9 +15,9 @@ int main(int argc, char *argv[])
     QDesktopWidget *widget = app.desktop();
     int height = widget->screenGeometry().height();
     int width = widget->screenGeometry().width();
-    int x = (width - mainWin->width()) / 2.0;
-    int y = (height - mainWin->height()) / 2.0;
-    mainWin->setGeometry(x, y, mainWin->width(), mainWin->height());
+    int x = (width - 800) / 2.0;
+    int y = (height - 600) / 2.0;
+    mainWin->setGeometry(x, y, 800, 600);
 	mainWin->show();
 	return app.exec();
 }

@@ -21,6 +21,7 @@ class OptionsDialog : public QDialog
                       QString browser = "",
                       QString pathDb = "",
                       bool monitoringClipboard = false);
+        ~OptionsDialog();
         QString defaultBrowser() const { return editDefBrowser->text(); }
         QString pathToDb() const { return editPathToDB->text(); }
         bool monitoringClipboard() const { return chkMonitoringClipboard->isChecked(); }

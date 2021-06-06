@@ -55,6 +55,18 @@ OptionsDialog::OptionsDialog(QWidget *parent,
     label_2->setText(tr("Path to database:"));
 }
 
+OptionsDialog::~OptionsDialog()
+{
+    delete chkMonitoringClipboard;
+    delete buttonBox;
+    delete browse1;
+    delete browse2;
+    delete label;
+    delete label_2;
+    delete editDefBrowser;
+    delete editPathToDB;
+}
+
 void OptionsDialog::browseFile()
 {
     if (this->sender() == browse2) {
