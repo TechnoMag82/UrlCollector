@@ -127,6 +127,7 @@ void AddUrl::addTag()
     }
     allTags->append(tag);
     addTagItem(tag, Qt::Checked);
+    editNewTag->clear();
 }
 
 void AddUrl::initTags(QList<QString*> *urltags)

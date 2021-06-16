@@ -22,7 +22,7 @@ class AddUrl : public QDialog
 		// edit=true открыт диалог для редактирвания ссылки, edit=false - для добавления ссылки
         // weburl - структура, которую собираемся изменить
         weburl *getUrl();
-        QList<QString*> * getTags() const { return allTags; }
+        QList<QString*> * getAllTags() const { return allTags; }
 	private slots:
 		void OkButton();
         void addTag();

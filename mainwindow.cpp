@@ -706,7 +706,7 @@ void MainWindow::addItemToList() // добавляем ссылку в спис�
         {
             weburl *url = addUrlDialog->getUrl();
             _addItem(url);
-            allTags = addUrlDialog->getTags();
+            allTags = addUrlDialog->getAllTags();
             updateTags(url);
             updateWindowsTitle();
             dataEdited = true;
@@ -728,7 +728,7 @@ void MainWindow::refreshItem() // обновляем измененный эле
         if (addUrlDialog->exec() == QDialog::Accepted)
 		{
             url = addUrlDialog->getUrl();
-            allTags = addUrlDialog->getTags();
+            allTags = addUrlDialog->getAllTags();
             updateTags(url);
             QListWidgetItem *curItem = urlListWidget->currentItem();
             curItem->setText(url->link());
