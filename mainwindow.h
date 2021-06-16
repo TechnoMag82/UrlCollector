@@ -121,6 +121,10 @@ private slots:
 
         void clearTags();
         bool containsTag(const QString &tag);
+        bool treeContainTag(const QString &tag);
+        void updateTags(weburl *url);
+
+        void updateWindowsTitle();
 
         QList<weburl*> *listUrl = nullptr;
         QList<QString*> *allTags = nullptr;

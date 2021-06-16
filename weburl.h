@@ -28,7 +28,6 @@ class weburl
             return tags->size();
         }
         QList<QString*> * getTags() const { return tags; }
-
 	private:
 		QString inlink;
 		QString ininfo;

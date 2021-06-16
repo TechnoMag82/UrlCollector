@@ -54,8 +54,11 @@ void MainWindow::initApp()
 
 void MainWindow::createDatabase()
 {
-    QString pathToNewDB = QFileDialog::getSaveFileName(this, tr("Select file of BataBase"), "/home", "Data Base Of URL's (*.ucl)");
+    QString pathToNewDB = QFileDialog::getSaveFileName(this, tr("Select file of DataBase"), "/home", "Data Base Of URL's (*.ucl)");
     if (!pathToNewDB.isEmpty()) {
+        if (!pathToNewDB.endsWith(".ucl")) {
+            pathToNewDB.append(".ucl");
+        }
         strPathToDB = pathToNewDB;
         if (QFile::exists(strPathToDB) == false) // если файл не существует то создаем пустую базу
         {
@@ -392,12 +395,11 @@ void MainWindow::delUrl() // удаляем выделенную ссылку
                                         QMessageBox::Yes | QMessageBox::No);
 		if (ret == QMessageBox::Yes)
 		{
-			QString temp;
             int curRow = urlListWidget->currentRow();
             QListWidgetItem *curItem = urlListWidget->takeItem(curRow); // удаляем элемент из QListWidget
             urlListWidget->removeItemWidget(curItem); // удаляем элемент из QListWidgetItem
             listUrl->removeAt(curRow);
-            setWindowTitle(PROGRAM_NAME + " - elements in DB " + temp.setNum(listUrl->count(), 10) );
+            updateWindowsTitle();
             dataEdited = true;
 		}
     } else {
@@ -433,8 +435,43 @@ bool MainWindow::containsTag(const QString &tag)
     return false;
 }
 
+bool MainWindow::treeContainTag(const QString &tag)
+{
+    int count = rootTagsItem->childCount();
+    for (int i = 0; i < count; i++) {
+        QTreeWidgetItem *widgetItem = rootTagsItem->child(i);
+        if (widgetItem->text(0).compare(tag) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void MainWindow::updateTags(weburl *url)
+{
+    QList<QString*> *tags = url->getTags();
+    if (tags == nullptr) {
+        return;
+    }
+    int count = tags->size();
+    for (int i = 0; i < count; i++) {
+        QString *aTag  = tags->at(i);
+        if (!treeContainTag(*aTag)) {
+            addTagWidgetItem(*aTag);
+        }
+    }
+}
+
+void MainWindow::updateWindowsTitle()
+{
+    QString temp;
+    setWindowTitle(PROGRAM_NAME + " [" + QFileInfo(strPathToDB).fileName() + "] - elements in DB " + temp.setNum(listUrl->count(), 10) );
+}
+
 void MainWindow::showFavorites() // скрываем/показываем все избранные ссылки
 {
+    if (strPathToDB.isEmpty())
+        return;
     QListWidgetItem *item = new QListWidgetItem;
     int count = listUrl->size();
     for (int i = 0; i < count; i++) // пройдемся посписку
@@ -524,8 +561,8 @@ bool MainWindow::loadDB()
             }
 		} // end while
         textDB.close();
+        updateWindowsTitle();
         qDebug() << "Database is loaded.";
-        setWindowTitle(PROGRAM_NAME + " - elements in DB " + temp.setNum(listUrl->count(), 10) );
         dataEdited = false;
 		return true;
     } else {
@@ -579,7 +616,7 @@ void MainWindow::addTagWidgetItem(const QString &tag)
 {
     QTreeWidgetItem *newItem = new QTreeWidgetItem();
     newItem->setText(0, tag);
-    newItem->setForeground(0, QBrush(randomColor(), Qt::SolidPattern));
+    newItem->setBackground(0, QBrush(randomColor(), Qt::SolidPattern));
     rootTagsItem->addChild(newItem);
 }
 
@@ -630,14 +667,6 @@ QColor MainWindow::randomColor()
     return QColor(r, g, b);
 }
 
-//void MainWindow::clearUrlList(QList<QString*> *list)
-//{
-//    for (int i = 0; i < list->size(); i++) {
-//        QString *item = list->takeAt(i);
-//        delete item;
-//    }
-//}
-
 void MainWindow::clearTags()
 {
     if (allTags != nullptr) {
@@ -646,6 +675,7 @@ void MainWindow::clearTags()
             delete *it;
         }
         delete allTags;
+        allTags = nullptr;
     }
 }
 
@@ -671,14 +701,17 @@ void MainWindow::addItemToList() // добавляем ссылку в спис�
 {
     if (!strPathToDB.isEmpty()) {
         resetList(); // вернемся к исходному списку
-        AddUrl dialog(this, false, nullptr);
-        if (dialog.exec() == QDialog::Accepted)
+        AddUrl *addUrlDialog = new AddUrl(this, false, nullptr, allTags);
+        if (addUrlDialog->exec() == QDialog::Accepted)
         {
-            QString temp;
-            _addItem(new weburl(dialog.isFavorite(), dialog.webUrl(), dialog.infoUrl()));
-            setWindowTitle( PROGRAM_NAME + " - elements in DB " + temp.setNum(listUrl->count(), 10) );
+            weburl *url = addUrlDialog->getUrl();
+            _addItem(url);
+            allTags = addUrlDialog->getTags();
+            updateTags(url);
+            updateWindowsTitle();
             dataEdited = true;
         }
+        delete addUrlDialog;
     } else {
         QMessageBox::critical(this,
                               tr("Edit database"),
@@ -694,11 +727,11 @@ void MainWindow::refreshItem() // обновляем измененный эле
         AddUrl *addUrlDialog = new AddUrl(this, true, url, allTags);
         if (addUrlDialog->exec() == QDialog::Accepted)
 		{
-            url->setLink(addUrlDialog->webUrl());
-            url->setInfo(addUrlDialog->infoUrl());
-            url->setFavorite(addUrlDialog->isFavorite());
+            url = addUrlDialog->getUrl();
+            allTags = addUrlDialog->getTags();
+            updateTags(url);
             QListWidgetItem *curItem = urlListWidget->currentItem();
-            curItem->setText(addUrlDialog->webUrl());
+            curItem->setText(url->link());
             setItemFavorite(url->isFavorite(), curItem);
             urlInfo->setPlainText(url->info());
             dataEdited = true;

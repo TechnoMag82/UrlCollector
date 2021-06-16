@@ -57,9 +57,10 @@ AddUrl::AddUrl(QWidget *parent, bool edit, weburl *url, QList<QString*> *allTags
 
     buttonAddTag = new QPushButton(this);
     buttonAddTag->setObjectName(QString::fromUtf8("addTag"));
+    buttonAddTag->setToolTip(tr("Press for add new tag"));
     buttonAddTag->setText("+");
     buttonAddTag->setGeometry(QRect(365, 360, 30, 29));
-    connect(buttonAddTag, SIGNAL(triggered()), this, SLOT(addTag()));
+    connect(buttonAddTag, SIGNAL(clicked()), this, SLOT(addTag()));
 
     if (edit == true)
     {
@@ -68,7 +69,24 @@ AddUrl::AddUrl(QWidget *parent, bool edit, weburl *url, QList<QString*> *allTags
         if (url->isFavorite() == true)
     	   	chkFavorite->setCheckState(Qt::Checked);
 	}
-    initTags(url->getTags());
+    if (url != nullptr) {
+        initTags(url->getTags());
+    } else {
+        initTags(nullptr);
+    }
+}
+
+weburl *AddUrl::getUrl()
+{
+    if (url == nullptr) {
+        url = new weburl(chkFavorite->isChecked(), editWeburl->text(), infourl->toPlainText());
+    } else {
+        url->setLink(editWeburl->text());
+        url->setInfo(infourl->toPlainText());
+        url->setFavorite(chkFavorite->isChecked());
+    }
+    fillTags();
+    return url;
 }
 
 void AddUrl::OkButton()
@@ -78,7 +96,6 @@ void AddUrl::OkButton()
         if (editWeburl->text().startsWith("http://") ||
                 editWeburl->text().startsWith("www.") ||
                 editWeburl->text().startsWith("https://")) {
-            fillTags(url);
 			accept();
         } else {
             QMessageBox::warning(this,
@@ -88,7 +105,7 @@ void AddUrl::OkButton()
         }
     } else {
         QMessageBox::warning(this,
-                             tr("add Url"),
+                             tr("Add Url"),
                              tr("You must write web-link to cite!"),
                              QMessageBox::Ok);
         editWeburl->setFocus();
@@ -97,7 +114,19 @@ void AddUrl::OkButton()
 
 void AddUrl::addTag()
 {
-
+    if (editNewTag->text().isEmpty()) {
+        QMessageBox::warning(this,
+                             tr("Add Tag"),
+                             tr("Cannot add empty tag!"),
+                             QMessageBox::Ok);
+        return;
+    }
+    QString *tag = new QString(editNewTag->text());
+    if (allTags == nullptr) {
+        allTags = new QList<QString*>();
+    }
+    allTags->append(tag);
+    addTagItem(tag, Qt::Checked);
 }
 
 void AddUrl::initTags(QList<QString*> *urltags)
@@ -107,10 +136,7 @@ void AddUrl::initTags(QList<QString*> *urltags)
     }
     int count = allTags->size();
     for (int i = 0; i < count; i++) {
-        QListWidgetItem *newItem = new QListWidgetItem;
-        newItem->setCheckState(Qt::Unchecked);
-        newItem->setText(*allTags->at(i));
-        tagsList->addItem(newItem);
+        QListWidgetItem *newItem = addTagItem(allTags->at(i), Qt::Unchecked);
         if (urltags != nullptr && edit) {
             int count = urltags->size();
             for (int j = 0; j < count; j++) {
@@ -124,16 +150,31 @@ void AddUrl::initTags(QList<QString*> *urltags)
 }
 
 // обновляем список тэгов в ссылке
-void AddUrl::fillTags(weburl *Url)
+void AddUrl::fillTags()
 {
+    if (allTags == nullptr || url == nullptr) {
+        return;
+    }
     int count = allTags->size();
+    if (count == 0) {
+        return;
+    }
     QList<QString*> *tags = url->getTags();
     if (tags != nullptr) {
         tags->clear();
     }
     for (int i = 0; i < count; i++) {
         if (tagsList->item(i)->checkState() == Qt::Checked) {
-                Url->addTag(allTags->at(i));
+                url->addTag(allTags->at(i));
         }
     }
+}
+
+QListWidgetItem* AddUrl::addTagItem(QString *tag, Qt::CheckState isChecked)
+{
+    QListWidgetItem *newItem = new QListWidgetItem;
+    newItem->setCheckState(isChecked);
+    newItem->setText(*tag);
+    tagsList->addItem(newItem);
+    return newItem;
 }

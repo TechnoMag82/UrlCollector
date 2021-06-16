@@ -6,6 +6,8 @@ QT += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TEMPLATE = app
 TARGET = UrlCol
+
+CONFIG += c++11
 #DEPENDPATH += .
 #INCLUDEPATH += .
 

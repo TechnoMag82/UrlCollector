@@ -21,9 +21,8 @@ class AddUrl : public QDialog
         AddUrl(QWidget *parent = 0, bool edit=false, weburl *url = nullptr, QList<QString*> *allTags = nullptr);
 		// edit=true открыт диалог для редактирвания ссылки, edit=false - для добавления ссылки
         // weburl - структура, которую собираемся изменить
-        QString webUrl() const { return editWeburl->text(); }
-        QString infoUrl() const { return infourl->toPlainText(); }
-        bool isFavorite() const { return chkFavorite->isChecked(); }
+        weburl *getUrl();
+        QList<QString*> * getTags() const { return allTags; }
 	private slots:
 		void OkButton();
         void addTag();
@@ -41,7 +40,8 @@ class AddUrl : public QDialog
         bool edit = false;
 
         void initTags(QList<QString*> *urltags);
-        void fillTags(weburl *Url);
+        void fillTags();
+        QListWidgetItem *addTagItem(QString *tag, Qt::CheckState isChecked);
 };
 
 #endif
