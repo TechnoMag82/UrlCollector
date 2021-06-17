@@ -40,7 +40,7 @@ MainWindow::MainWindow()
 
 MainWindow::~MainWindow()
 {
-    clearTags();
+    clearAllTags();
     clearUrlList();
     delete listUrl;
     delete allTags;
@@ -412,11 +412,13 @@ void MainWindow::delUrl() // удаляем выделенную ссылку
 
 void MainWindow::clearUrlList()
 {
-    if (rootTagsItem != nullptr) {
-        while(rootTagsItem->childCount() != 0)
-            delete rootTagsItem->takeChild(0);
-    }
+    urlListWidget->clear();
     if (listUrl != nullptr) {
+        QList<weburl*>::iterator it = listUrl->begin();
+        for (; it != listUrl->end(); ++it) {
+            delete *it;
+        }
+        listUrl->clear();
         for (int i = 0; i < listUrl->size(); i++) {
             delete listUrl->takeAt(i);
         }
@@ -494,7 +496,7 @@ bool MainWindow::loadDB()
 	QFile textDB(strPathToDB);
     if (textDB.open(QIODevice::ReadOnly | QIODevice::Text) == true)
 	{
-        clearTags();
+        clearAllTags();
         clearUrlList();
         if (listUrl == nullptr) {
             listUrl = new QList<weburl*>();
@@ -669,7 +671,7 @@ QColor MainWindow::randomColor()
     return QColor(r, g, b);
 }
 
-void MainWindow::clearTags()
+void MainWindow::clearAllTags()
 {
     if (allTags != nullptr) {
         QList<QString*>::iterator it = allTags->begin();
@@ -678,6 +680,10 @@ void MainWindow::clearTags()
         }
         delete allTags;
         allTags = nullptr;
+    }
+    if (rootTagsItem != nullptr) {
+        while(rootTagsItem->childCount() != 0)
+            delete rootTagsItem->takeChild(0);
     }
 }
 

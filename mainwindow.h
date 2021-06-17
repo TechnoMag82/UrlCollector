@@ -119,7 +119,7 @@ private slots:
 
         QColor randomColor();
 
-        void clearTags();
+        void clearAllTags();
         bool containsTag(const QString &tag);
         bool treeContainTag(const QString &tag);
         void updateTags(weburl *url);
