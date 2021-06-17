@@ -244,69 +244,69 @@ void MainWindow::createActions()
     actNewDatabase->setStatusTip(tr("Create new database"));
     connect(actNewDatabase, SIGNAL(triggered()), this, SLOT(createDatabase()));
 
-	actOpenUrl = new QAction(QIcon(":/images/go-jump.png"),tr("Open URL"), this);
-	actOpenUrl->setShortcut(tr("Ctrl+O"));
-	actOpenUrl->setStatusTip(tr("Oprn link in web-browser."));
-	connect(actOpenUrl, SIGNAL(triggered()), this, SLOT(gotoUrl()));
-	
-	actOpenUrlWith = new QAction(tr("Open URL with ..."), this);
-	actOpenUrlWith->setShortcut(tr("Alt+O"));
-	actOpenUrlWith->setStatusTip(tr("Open link in other web-browser."));
-	connect(actOpenUrlWith, SIGNAL(triggered()), this, SLOT(gotoUrl()));
-	
-	actAddUrl = new QAction(QIcon(":/images/list-add.png"), tr("Add URL ..."), this);
-	actAddUrl->setShortcut(tr("Ctrl+A"));
-	actAddUrl->setStatusTip(tr("Add new URL in list."));
-	connect(actAddUrl, SIGNAL(triggered()), this, SLOT(execAddUrl()));
-	
-	actToolAddUrl= new QAction(QIcon(":/images/toolbar/list-add.png"), tr("Add URL ..."), this);
-	actToolAddUrl->setStatusTip(tr("Add new URL in list."));
-	connect(actToolAddUrl, SIGNAL(triggered()), this, SLOT(execAddUrl()));
-	
-	actToolDelUrl= new QAction(QIcon(":/images/toolbar/list-remove.png"), tr("Delete URL ..."), this);
-	actToolDelUrl->setStatusTip(tr("Delete URL from list."));
-	connect(actToolDelUrl, SIGNAL(triggered()), this, SLOT(delUrl()));
-	
-	actToolGoToUrl = new QAction(QIcon(":/images/toolbar/go-jump.png"), tr("Open URL with default web-browser..."), this);
-	actToolGoToUrl->setStatusTip(tr("Open URL in with default web-browser."));
-	connect(actToolGoToUrl, SIGNAL(triggered()), this, SLOT(gotoUrl()));
-	
-	actToolFavorite = new QAction(QIcon(":/images/toolbar/emblem-favorite.png"), tr("Show only favorite links."), this);
-	actToolFavorite->setStatusTip(tr("Show only favorite links from base."));
-	actToolFavorite->setCheckable(true);
-	connect(actToolFavorite, SIGNAL(triggered()), this, SLOT(showFavorites()));
-	
-	actToolEditUrl = new QAction(QIcon(":/images/toolbar/accessories-text-editor.png"), tr("Edit data about URL ..."), this);
-	actToolEditUrl->setStatusTip(tr("Edit data about URL."));
-	connect(actToolEditUrl, SIGNAL(triggered()), this, SLOT(execAddUrl()));
-	
-	actEditUrl = new QAction(QIcon(":/images/accessories-text-editor.png"), tr("Edit URL ..."), this);
-	actEditUrl->setShortcut(tr("Ctrl+E"));
-	actEditUrl->setStatusTip(tr("Edit data about URL."));
-	connect(actEditUrl, SIGNAL(triggered()), this, SLOT(execAddUrl()));
-	
-	actDelUrl = new QAction(QIcon(":/images/list-remove.png"), tr("Delete URL"), this);
-	actDelUrl->setShortcut(tr("Ctrl+D"));
-	actDelUrl->setStatusTip(tr("Delete URL from list."));
-	connect(actDelUrl, SIGNAL(triggered()), this , SLOT(delUrl()));
-	
-	actSearchUrl = new QAction(this); // при нажатии на Ctrl+F активирует строку ввода для поиска ссылок
-	actSearchUrl->setShortcut(tr("Ctrl+F"));
-	connect(actSearchUrl, SIGNAL(triggered()), this, SLOT(setSearchFocus()));
-	
-	actExit = new QAction(QIcon(":/images/application-exit.png"), tr("Exit"), this);
-	actExit->setShortcut(tr("Alt+X"));
-	actExit->setStatusTip(tr("Close program."));
-	connect(actExit, SIGNAL(triggered()), SLOT(close()));
-	
-	actOptions = new QAction(tr("Options ..."), this);
-	actOptions->setShortcut(tr("Alt+O"));
-	actOptions->setStatusTip(tr("program options."));
-	connect(actOptions, SIGNAL(triggered()), SLOT(Options()));
-	
-	actAbout = new QAction(QIcon(":/images/help-about.png"), tr("About ..."), this);
-	actAbout->setStatusTip(tr("About URL Collector."));
-	connect(actAbout, SIGNAL(triggered()), this, SLOT(About()));
+    actOpenUrl = new QAction(QIcon(":/images/go-jump.png"),tr("Open URL"), this);
+    actOpenUrl->setShortcut(tr("Ctrl+O"));
+    actOpenUrl->setStatusTip(tr("Oprn link in web-browser."));
+    connect(actOpenUrl, SIGNAL(triggered()), this, SLOT(gotoUrl()));
+
+    actOpenUrlWith = new QAction(tr("Open URL with ..."), this);
+    actOpenUrlWith->setShortcut(tr("Alt+O"));
+    actOpenUrlWith->setStatusTip(tr("Open link in other web-browser."));
+    connect(actOpenUrlWith, SIGNAL(triggered()), this, SLOT(gotoUrl()));
+
+    actAddUrl = new QAction(QIcon(":/images/list-add.png"), tr("Add URL ..."), this);
+    actAddUrl->setShortcut(tr("Ctrl+A"));
+    actAddUrl->setStatusTip(tr("Add new URL in list."));
+    connect(actAddUrl, SIGNAL(triggered()), this, SLOT(execAddUrl()));
+
+    actToolAddUrl= new QAction(QIcon(":/images/toolbar/list-add.png"), tr("Add URL ..."), this);
+    actToolAddUrl->setStatusTip(tr("Add new URL in list."));
+    connect(actToolAddUrl, SIGNAL(triggered()), this, SLOT(execAddUrl()));
+
+    actToolDelUrl= new QAction(QIcon(":/images/toolbar/list-remove.png"), tr("Delete URL ..."), this);
+    actToolDelUrl->setStatusTip(tr("Delete URL from list."));
+    connect(actToolDelUrl, SIGNAL(triggered()), this, SLOT(delUrl()));
+
+    actToolGoToUrl = new QAction(QIcon(":/images/toolbar/go-jump.png"), tr("Open URL with default web-browser..."), this);
+    actToolGoToUrl->setStatusTip(tr("Open URL in with default web-browser."));
+    connect(actToolGoToUrl, SIGNAL(triggered()), this, SLOT(gotoUrl()));
+
+    actToolFavorite = new QAction(QIcon(":/images/toolbar/emblem-favorite.png"), tr("Show only favorite links."), this);
+    actToolFavorite->setStatusTip(tr("Show only favorite links from base."));
+    actToolFavorite->setCheckable(true);
+    connect(actToolFavorite, SIGNAL(triggered()), this, SLOT(showFavorites()));
+
+    actToolEditUrl = new QAction(QIcon(":/images/toolbar/accessories-text-editor.png"), tr("Edit data about URL ..."), this);
+    actToolEditUrl->setStatusTip(tr("Edit data about URL."));
+    connect(actToolEditUrl, SIGNAL(triggered()), this, SLOT(execAddUrl()));
+
+    actEditUrl = new QAction(QIcon(":/images/accessories-text-editor.png"), tr("Edit URL ..."), this);
+    actEditUrl->setShortcut(tr("Ctrl+E"));
+    actEditUrl->setStatusTip(tr("Edit data about URL."));
+    connect(actEditUrl, SIGNAL(triggered()), this, SLOT(execAddUrl()));
+
+    actDelUrl = new QAction(QIcon(":/images/list-remove.png"), tr("Delete URL"), this);
+    actDelUrl->setShortcut(tr("Ctrl+D"));
+    actDelUrl->setStatusTip(tr("Delete URL from list."));
+    connect(actDelUrl, SIGNAL(triggered()), this , SLOT(delUrl()));
+
+    actSearchUrl = new QAction(this); // при нажатии на Ctrl+F активирует строку ввода для поиска ссылок
+    actSearchUrl->setShortcut(tr("Ctrl+F"));
+    connect(actSearchUrl, SIGNAL(triggered()), this, SLOT(setSearchFocus()));
+
+    actExit = new QAction(QIcon(":/images/application-exit.png"), tr("Exit"), this);
+    actExit->setShortcut(tr("Alt+X"));
+    actExit->setStatusTip(tr("Close program."));
+    connect(actExit, SIGNAL(triggered()), SLOT(close()));
+
+    actOptions = new QAction(tr("Options ..."), this);
+    actOptions->setShortcut(tr("Ctrl+P"));
+    actOptions->setStatusTip(tr("program options."));
+    connect(actOptions, SIGNAL(triggered()), SLOT(Options()));
+
+    actAbout = new QAction(QIcon(":/images/help-about.png"), tr("About ..."), this);
+    actAbout->setStatusTip(tr("About URL Collector."));
+    connect(actAbout, SIGNAL(triggered()), this, SLOT(About()));
 }
 
 void MainWindow::readSettings() // считываем настройки программы из конфига
@@ -412,8 +412,10 @@ void MainWindow::delUrl() // удаляем выделенную ссылку
 
 void MainWindow::clearUrlList()
 {
-    while(urlListWidget->count() != 0)
-        delete urlListWidget->takeItem(0);
+    if (rootTagsItem != nullptr) {
+        while(rootTagsItem->childCount() != 0)
+            delete rootTagsItem->takeChild(0);
+    }
     if (listUrl != nullptr) {
         for (int i = 0; i < listUrl->size(); i++) {
             delete listUrl->takeAt(i);
@@ -586,13 +588,13 @@ void MainWindow::saveDB() // сохраняем базу ссылок
 				outDB << "status: favorite" << endl;
 			else
 				outDB << "status: normal" << endl;
-            int tagsSize = listUrl->at(i)->tagsCount();
-            if (tagsSize > 0) {
+            int tagsCount = listUrl->at(i)->tagsCount();
+            if (tagsCount > 0) {
                 outDB << "tags: ";
                 QList<QString*> *tags = listUrl->at(i)->getTags();
-                for (int i = 0; i < tagsSize; i++) {
-                    outDB << *tags->at(i);
-                    if (i < tagsSize - 1) {
+                for (int j = 0; j < tagsCount; j++) {
+                    outDB << *tags->at(j);
+                    if (j < tagsCount - 1) {
                          outDB << ", ";
                     }
                 }

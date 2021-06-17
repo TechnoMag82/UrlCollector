@@ -11,8 +11,10 @@ weburl::weburl(bool favorite,
 
 weburl::~weburl()
 {
-    tags->clear();
-    delete tags;
+    if (tags != nullptr) {
+        tags->clear();
+        delete tags;
+    }
 }
 
 void weburl::addTag(QString *tag)

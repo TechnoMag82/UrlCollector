@@ -21,7 +21,7 @@ class weburl
         void addTag(QString *tag);
         void removeTag(QString *tag);
         bool containsTag(const QString &tag);
-        bool tagsCount() {
+        int tagsCount() const {
             if (tags == nullptr) {
                 return 0;
             }
