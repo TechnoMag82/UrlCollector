@@ -1,14 +1,14 @@
 #include "addurl.h"
 
-AddUrl::AddUrl(QWidget *parent, bool edit, weburl *url, QList<QString*> *allTags)
+AddUrl::AddUrl(QWidget *parent, int editedRow, LinkStructure *linkStructure)
 	: QDialog(parent)
 {
 	setWindowTitle(tr("Add new URL"));
     setFixedSize(411, 445);
 
-    this->edit = edit;
-    this->url = url;
-    this->allTags = allTags;
+    this->editedRow = editedRow;
+    this->linkStructure = linkStructure;
+
 	buttonBox = new QDialogButtonBox(this);
     buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
     buttonBox->setGeometry(QRect(50, 400, 341, 32));
@@ -62,15 +62,16 @@ AddUrl::AddUrl(QWidget *parent, bool edit, weburl *url, QList<QString*> *allTags
     buttonAddTag->setGeometry(QRect(365, 360, 30, 29));
     connect(buttonAddTag, SIGNAL(clicked()), this, SLOT(addTag()));
 
-    if (edit == true)
+    if (editedRow != -1)
     {
-        infourl->setPlainText(url->info());
-        editWeburl->setText(url->link());
-        if (url->isFavorite() == true)
+        infourl->setPlainText(linkStructure->urlAt(editedRow)->info());
+        editWeburl->setText(linkStructure->urlAt(editedRow)->link());
+        if (linkStructure->isFavoriteLink(editedRow) == true) {
     	   	chkFavorite->setCheckState(Qt::Checked);
-	}
-    if (url != nullptr) {
-        initTags(url->getTags());
+        }
+    }
+    if (editedRow != -1 && linkStructure->urlAt(editedRow) != nullptr) {
+        initTags(linkStructure->urlAt(editedRow)->getTags());
     } else {
         initTags(nullptr);
     }
@@ -78,14 +79,16 @@ AddUrl::AddUrl(QWidget *parent, bool edit, weburl *url, QList<QString*> *allTags
 
 weburl *AddUrl::getUrl()
 {
+    weburl *url = nullptr;
+    url = linkStructure->urlAt(editedRow);
     if (url == nullptr) {
-        url = new weburl(chkFavorite->isChecked(), editWeburl->text(), infourl->toPlainText());
+        url = linkStructure->addUrl(chkFavorite->isChecked(), editWeburl->text(), infourl->toPlainText());
     } else {
         url->setLink(editWeburl->text());
         url->setInfo(infourl->toPlainText());
         url->setFavorite(chkFavorite->isChecked());
     }
-    fillTags();
+    fillTags(url);
     return url;
 }
 
@@ -122,27 +125,21 @@ void AddUrl::addTag()
         return;
     }
     QString *tag = new QString(editNewTag->text());
-    if (allTags == nullptr) {
-        allTags = new QList<QString*>();
-    }
-    allTags->append(tag);
+    linkStructure->appendTagToMainList(tag);
     addTagItem(tag, Qt::Checked);
     editNewTag->clear();
 }
 
 void AddUrl::initTags(QList<QString*> *urltags)
 {
-    if (allTags == nullptr) {
-        return;
-    }
-    int count = allTags->size();
-    for (int i = 0; i < count; i++) {
-        QListWidgetItem *newItem = addTagItem(allTags->at(i), Qt::Unchecked);
-        if (urltags != nullptr && edit) {
+    int allTagsCount = linkStructure->allTagsCount();
+    for (int i = 0; i < allTagsCount; i++) {
+        QListWidgetItem *newItem = addTagItem(linkStructure->getAllTags()->at(i), Qt::Unchecked);
+        if (urltags != nullptr && editedRow != -1) {
             int count = urltags->size();
             for (int j = 0; j < count; j++) {
                 // отмечаем тэги, которые присутсвуют в ссылке
-                if (urltags->at(j)->compare(allTags->at(i)) == 0) {
+                if (urltags->at(j)->compare(linkStructure->getAllTags()->at(i)) == 0) {
                     newItem->setCheckState(Qt::Checked);
                 }
             }
@@ -151,12 +148,9 @@ void AddUrl::initTags(QList<QString*> *urltags)
 }
 
 // обновляем список тэгов в ссылке
-void AddUrl::fillTags()
+void AddUrl::fillTags(weburl *url)
 {
-    if (allTags == nullptr || url == nullptr) {
-        return;
-    }
-    int count = allTags->size();
+    int count = linkStructure->allTagsCount();
     if (count == 0) {
         return;
     }
@@ -166,7 +160,7 @@ void AddUrl::fillTags()
     }
     for (int i = 0; i < count; i++) {
         if (tagsList->item(i)->checkState() == Qt::Checked) {
-                url->addTag(allTags->at(i));
+                url->addTag(linkStructure->getAllTags()->at(i));
         }
     }
 }

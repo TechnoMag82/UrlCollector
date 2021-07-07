@@ -33,6 +33,7 @@
 #include "weburl.h"
 #include "addurl.h"
 #include "optionsdialog.h"
+#include "linkstructure.h"
 
 class MainWindow : public QMainWindow
 {
@@ -104,11 +105,11 @@ private slots:
 		
 		bool loadDB();
 		void saveDB();
-		void addItemToList();
-        void _addItem(weburl *url);
+		void addNewUrlDialog();
+        void addUrlItem(weburl *url);
         void addTagWidgetItem(const QString &tag);
         void addWidgetItem(bool favorite, QString text);
-		void refreshItem();
+		void editUrlDialog();
         void clearUrlList();
 
         void selectBrowser(QStringList args);
@@ -120,14 +121,12 @@ private slots:
         QColor randomColor();
 
         void clearAllTags();
-        bool containsTag(const QString &tag);
         bool treeContainTag(const QString &tag);
         void updateTags(weburl *url);
 
         void updateWindowsTitle();
 
-        QList<weburl*> *listUrl = nullptr;
-        QList<QString*> *allTags = nullptr;
+        LinkStructure *linkStructure = nullptr;
 
         // Options
         QString strDefBrowser;

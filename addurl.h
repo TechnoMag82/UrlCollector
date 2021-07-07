@@ -13,16 +13,14 @@
 
 #include "weburl.h"
 #include "mainwindow.h"
+#include "linkstructure.h"
 
 class AddUrl : public QDialog
 {
     Q_OBJECT
 	public:
-        AddUrl(QWidget *parent = 0, bool edit=false, weburl *url = nullptr, QList<QString*> *allTags = nullptr);
-		// edit=true открыт диалог для редактирвания ссылки, edit=false - для добавления ссылки
-        // weburl - структура, которую собираемся изменить
+        AddUrl(QWidget *parent = 0, int editedRow=-1, LinkStructure *linkStructure = 0);
         weburl *getUrl();
-        QList<QString*> * getAllTags() const { return allTags; }
 	private slots:
 		void OkButton();
         void addTag();
@@ -35,12 +33,12 @@ class AddUrl : public QDialog
         QCheckBox *chkFavorite;
         QListWidget *tagsList;
 
-        weburl *url = nullptr;
-        QList<QString*> *allTags = nullptr;
-        bool edit = false;
+        LinkStructure *linkStructure = nullptr;
+
+        int editedRow = -1;
 
         void initTags(QList<QString*> *urltags);
-        void fillTags();
+        void fillTags(weburl *url);
         QListWidgetItem *addTagItem(QString *tag, Qt::CheckState isChecked);
 };
 

@@ -42,8 +42,7 @@ MainWindow::~MainWindow()
 {
     clearAllTags();
     clearUrlList();
-    delete listUrl;
-    delete allTags;
+    delete linkStructure;
     delete rootTagsItem;
 }
 
@@ -93,7 +92,7 @@ void MainWindow::clipboardChanged()
     {
         qDebug() << "datachanged:" <<  board->text();
         oldClipboard = board->text();
-        _addItem(new weburl(false, board->text(), tr("Added automatically")));
+        addUrlItem(linkStructure->addUrl(false, board->text(), tr("Added automatically")));
         dataEdited = true;
     }
 }
@@ -103,11 +102,9 @@ void MainWindow::renameTag()
     bool ok;
     QString text = QInputDialog::getText(this, tr("Rename tag"),
                                                tr("New tag name:"), QLineEdit::Normal,
-                                               *allTags->at(selectedTagIndex), &ok);
+                                               selectedTagItem->text(0), &ok);
     if (ok == true && !text.isEmpty()) {
-        QString *tag = allTags->at(selectedTagIndex);
-        // переписываем данные по адресу, на который указывает указатель
-        tag->setRawData(text.data(), text.size());
+        linkStructure->renameTagAt(selectedTagIndex, text);
         selectedTagItem->setText(0, text);
         dataEdited = true;
     }
@@ -115,22 +112,13 @@ void MainWindow::renameTag()
 
 void MainWindow::deleteTag()
 {
-    QString *tag = allTags->at(selectedTagIndex);
     int ret = QMessageBox::question(this,
                                   tr("Delete tag"),
-                                  QString(tr("Delete tag '%1' from all links?")).arg(*tag),
+                                  QString(tr("Delete tag '%1' from all links?")).arg(selectedTagItem->text(0)),
                                   QMessageBox::Yes | QMessageBox::No);
     if (ret == QMessageBox::Yes) {
-        allTags->removeAt(selectedTagIndex);
         rootTagsItem->removeChild(selectedTagItem);
-        int count = listUrl->size();
-        for (int i = 0; i < count; i++) {
-            weburl *url = listUrl->at(i);
-            if (url->containsTag(*tag)) {
-                url->getTags()->removeAll(tag);
-            }
-        }
-        delete tag;
+        linkStructure->removeTagAt(selectedTagIndex);
         dataEdited = true;
     }
 }
@@ -170,7 +158,7 @@ void MainWindow::resetList()
     if (isSearching == true) {
         search->setText("");
         search->clear();
-        int count = listUrl->size();
+        int count = linkStructure->urlsCount();
         for (int i = 0; i < count; i++) // пройдемся посписку
         {
             urlListWidget->item(i)->setHidden(false);
@@ -184,7 +172,7 @@ void MainWindow::gotoUrl() // открываем браузер с ссылко�
     if (urlListWidget->count() != 0 || urlListWidget->currentRow() != -1)
 	{
 		QStringList args;
-        args << listUrl->at(urlListWidget->currentRow())->link();
+        args << linkStructure->urlAt(urlListWidget->currentRow())->link();
         if (!strDefBrowser.isEmpty() && (
                 this->sender() == actOpenUrl ||
                 this->sender() == actToolGoToUrl ||
@@ -216,13 +204,13 @@ void MainWindow::searchInDB(const QString text) // метод поиска пе�
     if (text.length() < 3) {
         return;
     }
-    int count = listUrl->size();
+    int count = linkStructure->urlsCount();
     for (int i = 0; i < count; i++) // пройдемся посписку
     {
         QListWidgetItem *item = urlListWidget->item(i);
         if (!text.isEmpty() && (
-            listUrl->at(i)->link().indexOf(text, 0, Qt::CaseInsensitive) != -1 ||
-            listUrl->at(i)->info().indexOf(text, 0, Qt::CaseInsensitive) != -1))
+            linkStructure->urlAt(i)->link().indexOf(text, 0, Qt::CaseInsensitive) != -1 ||
+            linkStructure->urlAt(i)->info().indexOf(text, 0, Qt::CaseInsensitive) != -1))
         {
             item->setHidden(false);
         } else {
@@ -360,14 +348,14 @@ void MainWindow::Options() // открываем диалог настройек
 
 void MainWindow::getInfo(QListWidgetItem *item) // получаем информацию о выделенной ссылке
 {
-    urlInfo->setPlainText(listUrl->at(urlListWidget->row(item))->info());
+    urlInfo->setPlainText(linkStructure->urlAt(urlListWidget->row(item))->info());
 }
 
 void MainWindow::selectByTag(QTreeWidgetItem *treeItem, int column)
 {
     if (strPathToDB.isEmpty())
         return;
-    int count = listUrl->size();
+    int count = linkStructure->urlsCount();
     bool isAllTags = treeItem->text(0) == tr("All tags");
     for (int i = 0; i < count; i++)
     {
@@ -376,7 +364,7 @@ void MainWindow::selectByTag(QTreeWidgetItem *treeItem, int column)
             item->setHidden(false);
         } else {
             QString tag = treeItem->text(0);
-            if (listUrl->at(i)->containsTag(tag)) {
+            if (linkStructure->urlAt(i)->containsTag(tag)) {
                 item->setHidden(false);
             } else {
                 item->setHidden(true);
@@ -398,7 +386,7 @@ void MainWindow::delUrl() // удаляем выделенную ссылку
             int curRow = urlListWidget->currentRow();
             QListWidgetItem *curItem = urlListWidget->takeItem(curRow); // удаляем элемент из QListWidget
             urlListWidget->removeItemWidget(curItem); // удаляем элемент из QListWidgetItem
-            listUrl->removeAt(curRow);
+            linkStructure->removeUrlAt(curRow);
             updateWindowsTitle();
             dataEdited = true;
 		}
@@ -413,30 +401,7 @@ void MainWindow::delUrl() // удаляем выделенную ссылку
 void MainWindow::clearUrlList()
 {
     urlListWidget->clear();
-    if (listUrl != nullptr) {
-        QList<weburl*>::iterator it = listUrl->begin();
-        for (; it != listUrl->end(); ++it) {
-            delete *it;
-        }
-        listUrl->clear();
-        for (int i = 0; i < listUrl->size(); i++) {
-            delete listUrl->takeAt(i);
-        }
-    }
-}
-
-bool MainWindow::containsTag(const QString &tag)
-{
-    if (allTags != nullptr) {
-        QList<QString*>::iterator it = allTags->begin();
-        for (; it != allTags->end(); ++it) {
-            QString *aTag = *it;
-            if (aTag->compare(tag) == 0) {
-                return true;
-            }
-        }
-    }
-    return false;
+    linkStructure->clearUrlList();
 }
 
 bool MainWindow::treeContainTag(const QString &tag)
@@ -469,7 +434,8 @@ void MainWindow::updateTags(weburl *url)
 void MainWindow::updateWindowsTitle()
 {
     QString temp;
-    setWindowTitle(PROGRAM_NAME + " [" + QFileInfo(strPathToDB).fileName() + "] - elements in DB " + temp.setNum(listUrl->count(), 10) );
+    setWindowTitle(PROGRAM_NAME + " [" + QFileInfo(strPathToDB).fileName() +
+                   "] - elements in DB " + temp.setNum(linkStructure->urlsCount(), 10) );
 }
 
 void MainWindow::showFavorites() // скрываем/показываем все избранные ссылки
@@ -477,10 +443,10 @@ void MainWindow::showFavorites() // скрываем/показываем все
     if (strPathToDB.isEmpty())
         return;
     QListWidgetItem *item = new QListWidgetItem;
-    int count = listUrl->size();
+    int count = linkStructure->urlsCount();
     for (int i = 0; i < count; i++) // пройдемся посписку
     {
-        if (listUrl->at(i)->isFavorite() == false) // если эл-т не фаворит
+        if (linkStructure->isFavoriteLink(i) == false) // если эл-т не фаворит
         {
             item = urlListWidget->item(i); // получаем нужный элемент (и его свойства)
             if (actToolFavorite->isChecked() == true) // и если кнопка тулбара нажаьа
@@ -498,9 +464,6 @@ bool MainWindow::loadDB()
 	{
         clearAllTags();
         clearUrlList();
-        if (listUrl == nullptr) {
-            listUrl = new QList<weburl*>();
-        }
 		// временные строки для хранения инфы
 		QString temp;
 		QString strLink;
@@ -526,9 +489,6 @@ bool MainWindow::loadDB()
                 favorite = true;
 
             if (temp.startsWith("tags: ")) {
-                if (allTags == nullptr) {
-                    allTags = new QList<QString*>();
-                }
                 strTags = temp.remove(0, 5);
                 QStringList spTags = strTags.split(',', QString::SkipEmptyParts);
                 QStringList::iterator it = spTags.begin();
@@ -536,8 +496,8 @@ bool MainWindow::loadDB()
                     QString name = *it;
                     QString *aTag = new QString(name.remove(0, 1));
                     tempTags->append(aTag);
-                    if (!containsTag(*aTag)) {
-                        allTags->append(aTag);
+                    if (!linkStructure->mainListContainsTag(*aTag)) {
+                        linkStructure->appendTagToMainList(aTag);
                         addTagWidgetItem(*aTag);
                     }
                 }
@@ -555,13 +515,13 @@ bool MainWindow::loadDB()
                     strInfo += "\n";
                     strInfo += temp;
                 }
-                weburl *url = new weburl(favorite, strLink, strInfo);
+                weburl *url = linkStructure->addUrl(favorite, strLink, strInfo);
                 QList<QString*>::iterator it = tempTags->begin();
                 for (; it != tempTags->end(); ++it) {
-                    url->addTag(*it);
+                    linkStructure->addTagToUrl(url, *it);
                 }
                 tempTags->clear();
-                _addItem(url);	// добавляем ссылку
+                addUrlItem(url);	// добавляем ссылку
             }
 		} // end while
         textDB.close();
@@ -577,43 +537,12 @@ bool MainWindow::loadDB()
 
 void MainWindow::saveDB() // сохраняем базу ссылок
 {
-	QFile textDB(strPathToDB);
-    if (textDB.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate) == true)
-	{
-		QTextStream outDB(&textDB); // создаем поток вывода текста в файл
-		outDB.setCodec("UTF-8");
-        int count = listUrl->size();
-        for (int i = 0; i < count; i++) // пройдемся поо БД
-		{
-            outDB << "link: " << listUrl->at(i)->link() << endl;
-            if (listUrl->at(i)->isFavorite() == true)
-				outDB << "status: favorite" << endl;
-			else
-				outDB << "status: normal" << endl;
-            int tagsCount = listUrl->at(i)->tagsCount();
-            if (tagsCount > 0) {
-                outDB << "tags: ";
-                QList<QString*> *tags = listUrl->at(i)->getTags();
-                for (int j = 0; j < tagsCount; j++) {
-                    outDB << *tags->at(j);
-                    if (j < tagsCount - 1) {
-                         outDB << ", ";
-                    }
-                }
-                outDB << endl;
-            }
-            outDB << "info: " << endl << listUrl->at(i)->info() << endl << "endinfo." << endl;
-		}
-        textDB.close();
-	}
+    linkStructure->saveDB(strPathToDB);
 }
 
-void MainWindow::_addItem(weburl *url)
-// добавление эл-та в базу
-// bool gui - длбавляем и в список и в память?
+void MainWindow::addUrlItem(weburl *url)
 {
     addWidgetItem(url->isFavorite(), url->link());
-    listUrl->append(url);
 }
 
 void MainWindow::addTagWidgetItem(const QString &tag)
@@ -673,14 +602,7 @@ QColor MainWindow::randomColor()
 
 void MainWindow::clearAllTags()
 {
-    if (allTags != nullptr) {
-        QList<QString*>::iterator it = allTags->begin();
-        for (; it != allTags->end(); ++it) {
-            delete *it;
-        }
-        delete allTags;
-        allTags = nullptr;
-    }
+    linkStructure->clearAllTags();
     if (rootTagsItem != nullptr) {
         while(rootTagsItem->childCount() != 0)
             delete rootTagsItem->takeChild(0);
@@ -705,16 +627,15 @@ void MainWindow::addWidgetItem(bool favorite, QString text) // добавляе�
     urlListWidget->addItem(newItem);
 }
 
-void MainWindow::addItemToList() // добавляем ссылку в список
+void MainWindow::addNewUrlDialog() // добавляем ссылку в список
 {
     if (!strPathToDB.isEmpty()) {
         resetList(); // вернемся к исходному списку
-        AddUrl *addUrlDialog = new AddUrl(this, false, nullptr, allTags);
+        AddUrl *addUrlDialog = new AddUrl(this, -1, linkStructure);
         if (addUrlDialog->exec() == QDialog::Accepted)
         {
             weburl *url = addUrlDialog->getUrl();
-            _addItem(url);
-            allTags = addUrlDialog->getAllTags();
+            addUrlItem(url);
             updateTags(url);
             updateWindowsTitle();
             dataEdited = true;
@@ -728,15 +649,13 @@ void MainWindow::addItemToList() // добавляем ссылку в спис�
     }
 }
 
-void MainWindow::refreshItem() // обновляем измененный элемент списка
+void MainWindow::editUrlDialog() // обновляем измененный элемент списка
 {
     if (urlListWidget->count() != 0) {
-        weburl *url = listUrl->at(urlListWidget->currentRow());
-        AddUrl *addUrlDialog = new AddUrl(this, true, url, allTags);
+        AddUrl *addUrlDialog = new AddUrl(this, urlListWidget->currentRow(), linkStructure);
         if (addUrlDialog->exec() == QDialog::Accepted)
 		{
-            url = addUrlDialog->getUrl();
-            allTags = addUrlDialog->getAllTags();
+            weburl *url = addUrlDialog->getUrl();
             updateTags(url);
             QListWidgetItem *curItem = urlListWidget->currentItem();
             curItem->setText(url->link());
@@ -756,9 +675,9 @@ void MainWindow::refreshItem() // обновляем измененный эле
 void MainWindow::execAddUrl() // вызов диалога добавления ссылки
 {
     if (this->sender() == actAddUrl || this->sender() == actToolAddUrl) // если диалог вызвается из меню "Добавить адрес"
-		addItemToList();
+        addNewUrlDialog();
     if (this->sender() == actEditUrl || this->sender() == actToolEditUrl) // если диалог вызвается из меню "Редактировать адрес"
-		refreshItem();
+        editUrlDialog();
 }
 
 void MainWindow::createToolBar()

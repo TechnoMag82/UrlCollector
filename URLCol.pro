@@ -13,9 +13,11 @@ CONFIG += c++11
 
 # Input
 HEADERS += addurl.h mainwindow.h weburl.h optionsdialog.h \
-    tagsdialog.h
+    tagsdialog.h \
+    linkstructure.h
 SOURCES += addurl.cpp main.cpp mainwindow.cpp weburl.cpp optionsdialog.cpp \
-    tagsdialog.cpp
+    tagsdialog.cpp \
+    linkstructure.cpp
 RESOURCES += urlcol.qrc
 
 TRANSLATIONS += main_ru.ts
