@@ -6,9 +6,11 @@ const QString PROGRAM_CONFIG="/.urlcol/url.config";
 
 MainWindow::MainWindow()
 {
+    homeDir = QDir::homePath();
+    linkStructure = new LinkStructure();
+
 	setWindowTitle( PROGRAM_NAME );
 	setWindowIcon(QIcon(":/images/mainwindow.png"));
-    homeDir = QDir::homePath();
 	setWindowState(Qt::WindowActive);
 	
     search = new QLineEdit(this);
