@@ -4,63 +4,79 @@ AddUrl::AddUrl(QWidget *parent, int editedRow, LinkStructure *linkStructure)
 	: QDialog(parent)
 {
 	setWindowTitle(tr("Add new URL"));
-    setFixedSize(411, 445);
+    setMinimumWidth(500);
 
     this->editedRow = editedRow;
     this->linkStructure = linkStructure;
 
-	buttonBox = new QDialogButtonBox(this);
-    buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
-    buttonBox->setGeometry(QRect(50, 400, 341, 32));
-    buttonBox->setOrientation(Qt::Horizontal);
-    buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(OkButton()));
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-     
+    QVBoxLayout *vboxLayout = new QVBoxLayout();
+
     editWeburl = new QLineEdit(this);
     editWeburl->setObjectName(QString::fromUtf8("lineEdit"));
-    editWeburl->setGeometry(QRect(10, 30, 391, 29));
     editWeburl->setFocus();
 
     infourl = new QTextEdit(this);
     infourl->setObjectName(QString::fromUtf8("textEdit"));
-    infourl->setGeometry(QRect(10, 80, 391, 120));
     infourl->setTabChangesFocus(true);
     infourl->setWordWrapMode(QTextOption::WordWrap);
-
-    chkFavorite = new QCheckBox(tr("Is favorite!"), this);
-    chkFavorite->setGeometry(QRect(10, 400, 150, 18));
+    infourl->setAcceptRichText(false);
 
     QLabel *label = new QLabel(this);
     label->setObjectName(QString::fromUtf8("label"));
-    label->setGeometry(QRect(10, 10, 57, 19));
     label->setText(tr("URL:"));
+
+    vboxLayout->addWidget(label);
+    vboxLayout->addWidget(editWeburl);
 
     label = new QLabel(this);
     label->setObjectName(QString::fromUtf8("label_2"));
-    label->setGeometry(QRect(10, 60, 170, 19));
     label->setText(tr("Informtion about URL:"));
+
+    vboxLayout->addWidget(label);
+    vboxLayout->addWidget(infourl);
 
     label = new QLabel(this);
     label->setObjectName(QString::fromUtf8("label_3"));
-    label->setGeometry(QRect(10, 210, 170, 19));
     label->setText(tr("Tags:"));
 
     tagsList = new QListWidget(this);
     tagsList->setObjectName(QString::fromUtf8("tagsList"));
-    tagsList->setGeometry(10, 230, 391, 120);
+    tagsList->setMaximumHeight(120);
+
+    vboxLayout->addWidget(label);
+    vboxLayout->addWidget(tagsList);
+
+    QHBoxLayout *hboxLayout = new QHBoxLayout();
 
     editNewTag = new QLineEdit(this);
     editNewTag->setObjectName(QString::fromUtf8("editNewTag"));
     editNewTag->setPlaceholderText(tr("Name of new tag"));
-    editNewTag->setGeometry(QRect(10, 360, 340, 29));
 
     buttonAddTag = new QPushButton(this);
     buttonAddTag->setObjectName(QString::fromUtf8("addTag"));
     buttonAddTag->setToolTip(tr("Press for add new tag"));
     buttonAddTag->setText("+");
-    buttonAddTag->setGeometry(QRect(365, 360, 30, 29));
+    buttonAddTag->setMaximumWidth(32);
     connect(buttonAddTag, SIGNAL(clicked()), this, SLOT(addTag()));
+
+    hboxLayout->addWidget(editNewTag);
+    hboxLayout->addWidget(buttonAddTag);
+    vboxLayout->addLayout(hboxLayout);
+
+    chkFavorite = new QCheckBox(tr("Is favorite!"), this);
+
+    vboxLayout->addWidget(chkFavorite);
+
+    buttonBox = new QDialogButtonBox(this);
+    buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
+    buttonBox->setOrientation(Qt::Horizontal);
+    buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(OkButton()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+
+    vboxLayout->addWidget(buttonBox);
+
+    setLayout(vboxLayout);
 
     if (editedRow != -1)
     {

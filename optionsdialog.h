@@ -12,6 +12,8 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QCheckBox>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 class OptionsDialog : public QDialog
 {
@@ -33,8 +35,6 @@ class OptionsDialog : public QDialog
 		QDialogButtonBox *buttonBox;
     	QPushButton *browse1;
     	QPushButton *browse2;
-    	QLabel *label;
-    	QLabel *label_2;
         QLineEdit *editDefBrowser;
         QLineEdit *editPathToDB;
 };

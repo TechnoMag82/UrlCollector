@@ -10,6 +10,8 @@
 #include <QMessageBox>
 #include <QListWidget>
 #include <QPushButton>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 #include "weburl.h"
 #include "mainwindow.h"

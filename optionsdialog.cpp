@@ -6,53 +6,70 @@ OptionsDialog::OptionsDialog(QWidget *parent,
                              bool monitoringClipboard)
 	: QDialog(parent)
 {
-    setFixedSize(377, 220);
-    buttonBox = new QDialogButtonBox(this);
-    buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
-    buttonBox->setGeometry(QRect(20, 170, 341, 32));
-    buttonBox->setOrientation(Qt::Horizontal);
-    buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
+    setWindowTitle(tr("Options"));
     
-    QObject::connect(buttonBox, SIGNAL(accepted()), this, SLOT(okButton()));
-    QObject::connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-    
-    browse1 = new QPushButton(this);
-    browse1->setObjectName(QString::fromUtf8("browse1"));
-    browse1->setGeometry(QRect(280, 30, 80, 29));
-    connect(browse1, SIGNAL(clicked()), this, SLOT(browseFile()));
-    
-    browse2 = new QPushButton(this);
-    browse2->setObjectName(QString::fromUtf8("brose2"));
-    browse2->setGeometry(QRect(280, 80, 80, 29));
-    connect(browse2, SIGNAL(clicked()), this, SLOT(browseFile()));
-    
-    editDefBrowser = new QLineEdit(this);
-    editDefBrowser->setObjectName(QString::fromUtf8("editDefBrowser"));
-    editDefBrowser->setGeometry(QRect(10, 30, 251, 29));
-    editDefBrowser->setReadOnly(true);
-    editDefBrowser->setText(browser);
-    editPathToDB = new QLineEdit(this);
-    editPathToDB->setObjectName(QString::fromUtf8("editPathToDB"));
-    editPathToDB->setGeometry(QRect(10, 80, 251, 29));
-    editPathToDB->setReadOnly(true);
-    editPathToDB->setText(pathDb);
-    label = new QLabel(this);
+    QVBoxLayout *vboxLayout = new QVBoxLayout();
+
+    QLabel *label = new QLabel(this);
     label->setObjectName(QString::fromUtf8("label"));
     label->setGeometry(QRect(10, 10, 181, 19));
-    label_2 = new QLabel(this);
-    label_2->setObjectName(QString::fromUtf8("label_2"));
-    label_2->setGeometry(QRect(10, 60, 241, 19));
+    label->setText(tr("Default web-browser:"));
+
+    vboxLayout->addWidget(label);
+
+    QHBoxLayout *hboxLayout = new QHBoxLayout();
+
+    editDefBrowser = new QLineEdit(this);
+    editDefBrowser->setObjectName(QString::fromUtf8("editDefBrowser"));
+    editDefBrowser->setReadOnly(true);
+    editDefBrowser->setText(browser);
+
+    browse1 = new QPushButton(this);
+    browse1->setObjectName(QString::fromUtf8("browse1"));
+    browse1->setText(tr("Browse ..."));
+    connect(browse1, SIGNAL(clicked()), this, SLOT(browseFile()));
+
+    hboxLayout->addWidget(editDefBrowser);
+    hboxLayout->addWidget(browse1);
+    vboxLayout->addLayout(hboxLayout);
+
+    label = new QLabel(this);
+    label->setObjectName(QString::fromUtf8("label_2"));
+    label->setGeometry(QRect(10, 60, 241, 19));
+    label->setText(tr("Path to database:"));
+
+    vboxLayout->addWidget(label);
+    hboxLayout = new QHBoxLayout();
+
+    editPathToDB = new QLineEdit(this);
+    editPathToDB->setObjectName(QString::fromUtf8("editPathToDB"));
+    editPathToDB->setReadOnly(true);
+    editPathToDB->setText(pathDb);
+
+    browse2 = new QPushButton(this);
+    browse2->setObjectName(QString::fromUtf8("brose2"));
+    browse2->setText(tr("Browse ..."));
+    connect(browse2, SIGNAL(clicked()), this, SLOT(browseFile()));
+
+    hboxLayout->addWidget(editPathToDB);
+    hboxLayout->addWidget(browse2);
+    vboxLayout->addLayout(hboxLayout);
     
     chkMonitoringClipboard = new QCheckBox(tr("Monitoring clipboard"), this);
     chkMonitoringClipboard->setToolTip(tr("Turn ON monotoring clipboard for automatically add URL to database"));
-    chkMonitoringClipboard->setGeometry(QRect(10, 130, 280, 24));
     chkMonitoringClipboard->setChecked(monitoringClipboard);
 
-    setWindowTitle(tr("Options"));
-    browse1->setText(tr("Browse ..."));
-    browse2->setText(tr("Browse ..."));
-    label->setText(tr("Default web-browser:"));
-    label_2->setText(tr("Path to database:"));
+    buttonBox = new QDialogButtonBox(this);
+    buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
+    buttonBox->setOrientation(Qt::Horizontal);
+    buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
+    QObject::connect(buttonBox, SIGNAL(accepted()), this, SLOT(okButton()));
+    QObject::connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+
+    vboxLayout->addWidget(chkMonitoringClipboard);
+    vboxLayout->addWidget(buttonBox);
+
+    setLayout(vboxLayout);
 }
 
 OptionsDialog::~OptionsDialog()
@@ -61,8 +78,6 @@ OptionsDialog::~OptionsDialog()
     delete buttonBox;
     delete browse1;
     delete browse2;
-    delete label;
-    delete label_2;
     delete editDefBrowser;
     delete editPathToDB;
 }
