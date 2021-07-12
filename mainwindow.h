@@ -92,6 +92,7 @@ private slots:
 		QTextEdit *urlInfo; // в нем показывается инфа о ссылке
 		QLineEdit *search; // строка ввода поиска
         QMenu *popupMenuTags;
+        QLabel *labelTags;
 		
 		void createMenu();
 		void createActions();

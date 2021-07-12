@@ -34,6 +34,7 @@ class LinkStructure
         void addTagToUrl(weburl *url, QString *tag);
         QList<QString*> * getTagsOfUrl(int i);
         void saveDB(QString pathToDb);
+        QString tagsAt(int i);
 
     private:
         QList<weburl*> *listUrl = nullptr;

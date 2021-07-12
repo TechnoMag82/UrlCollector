@@ -353,6 +353,7 @@ void MainWindow::Options() // открываем диалог настройек
 void MainWindow::getInfo(QListWidgetItem *item) // получаем информацию о выделенной ссылке
 {
     urlInfo->setPlainText(linkStructure->urlAt(urlListWidget->row(item))->info());
+    labelTags->setText(linkStructure->tagsAt(urlListWidget->row(item)));
 }
 
 void MainWindow::selectByTag(QTreeWidgetItem *treeItem, int column)
@@ -728,8 +729,17 @@ void MainWindow::createDocWindows()
 {
     QDockWidget *plainTextDoc = new QDockWidget(tr("URL information"), this);
 	plainTextDoc->setAllowedAreas(Qt::BottomDockWidgetArea);
+    QWidget *widget = new QWidget();
+    QVBoxLayout *vboxLayout = new QVBoxLayout();
 	urlInfo = new QTextEdit(plainTextDoc);
-	plainTextDoc->setWidget(urlInfo);
+    labelTags = new QLabel(plainTextDoc);
+    labelTags->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    vboxLayout->addWidget(urlInfo);
+    vboxLayout->addWidget(labelTags);
+    vboxLayout->setContentsMargins(4, 4, 4, 4);
+    widget->setLayout(vboxLayout);
+
+    plainTextDoc->setWidget(widget);
 	plainTextDoc->setFeatures(QDockWidget::NoDockWidgetFeatures);
 	plainTextDoc->setMaximumHeight(170);
 	addDockWidget(Qt::BottomDockWidgetArea, plainTextDoc);

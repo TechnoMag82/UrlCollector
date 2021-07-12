@@ -155,3 +155,15 @@ void LinkStructure::saveDB(QString pathToDb)
         textDB.close();
     }
 }
+
+QString LinkStructure::tagsAt(int i)
+{
+    QList<QString*> *tags = listUrl->at(i)->getTags();
+    QString strTags;
+    QList<QString*>::iterator it;
+    for (it = tags->begin(); it != tags->end(); ++it) {
+        strTags.append(*it);
+        strTags.append(" ");
+    }
+    return strTags;
+}
