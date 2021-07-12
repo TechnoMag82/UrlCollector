@@ -444,16 +444,15 @@ void MainWindow::showFavorites() // скрываем/показываем все
 {
     if (strPathToDB.isEmpty())
         return;
-    QListWidgetItem *item = new QListWidgetItem;
     int count = linkStructure->urlsCount();
     for (int i = 0; i < count; i++) // пройдемся посписку
     {
         if (linkStructure->isFavoriteLink(i) == false) // если эл-т не фаворит
         {
-            item = urlListWidget->item(i); // получаем нужный элемент (и его свойства)
-            if (actToolFavorite->isChecked() == true) // и если кнопка тулбара нажаьа
+            QListWidgetItem *item = urlListWidget->item(i); // получаем нужный элемент (и его свойства)
+            if (actToolFavorite->isChecked() == true) // и если кнопка тулбара нажата
                 item->setHidden(true); // скрываем его
-            else // если кнопка улбара не нажата
+            else // если кнопка тулбара НЕ нажата
                 item->setHidden(false);	// показываем его
         }
     }
@@ -526,6 +525,8 @@ bool MainWindow::loadDB()
                 addUrlItem(url);	// добавляем ссылку
             }
 		} // end while
+        tempTags->clear();
+        delete tempTags;
         textDB.close();
         updateWindowsTitle();
         qDebug() << "Database is loaded.";
