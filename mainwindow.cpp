@@ -212,7 +212,8 @@ void MainWindow::searchInDB(const QString text) // метод поиска пе�
         QListWidgetItem *item = urlListWidget->item(i);
         if (!text.isEmpty() && (
             linkStructure->urlAt(i)->link().indexOf(text, 0, Qt::CaseInsensitive) != -1 ||
-            linkStructure->urlAt(i)->info().indexOf(text, 0, Qt::CaseInsensitive) != -1))
+            linkStructure->urlAt(i)->info().indexOf(text, 0, Qt::CaseInsensitive) != -1 ||
+            linkStructure->urlAt(i)->containsTag(text)))
         {
             item->setHidden(false);
         } else {
@@ -236,7 +237,7 @@ void MainWindow::createActions()
 
     actOpenUrl = new QAction(QIcon(":/images/go-jump.png"),tr("Open URL"), this);
     actOpenUrl->setShortcut(tr("Ctrl+O"));
-    actOpenUrl->setStatusTip(tr("Oprn link in web-browser."));
+    actOpenUrl->setStatusTip(tr("Open link in web-browser."));
     connect(actOpenUrl, SIGNAL(triggered()), this, SLOT(gotoUrl()));
 
     actOpenUrlWith = new QAction(tr("Open URL with ..."), this);
@@ -257,11 +258,12 @@ void MainWindow::createActions()
     actToolDelUrl->setStatusTip(tr("Delete URL from list."));
     connect(actToolDelUrl, SIGNAL(triggered()), this, SLOT(delUrl()));
 
-    actToolGoToUrl = new QAction(QIcon(":/images/toolbar/go-jump.png"), tr("Open URL with default web-browser..."), this);
+    actToolGoToUrl = new QAction(QIcon(":/images/toolbar/go-jump.png"), tr("Open URL with default web-browser. (Ctrl+O)"), this);
     actToolGoToUrl->setStatusTip(tr("Open URL in with default web-browser."));
     connect(actToolGoToUrl, SIGNAL(triggered()), this, SLOT(gotoUrl()));
 
-    actToolFavorite = new QAction(QIcon(":/images/toolbar/emblem-favorite.png"), tr("Show only favorite links."), this);
+    actToolFavorite = new QAction(QIcon(":/images/toolbar/emblem-favorite.png"), tr("Show only favorite links. (Alt+F)"), this);
+    actToolFavorite->setShortcut(tr("Alt+F"));
     actToolFavorite->setStatusTip(tr("Show only favorite links from base."));
     actToolFavorite->setCheckable(true);
     connect(actToolFavorite, SIGNAL(triggered()), this, SLOT(showFavorites()));

@@ -133,14 +133,22 @@ void AddUrl::OkButton()
 
 void AddUrl::addTag()
 {
-    if (editNewTag->text().isEmpty()) {
+    QString strTag = editNewTag->text();
+    if (strTag.isEmpty()) {
         QMessageBox::warning(this,
                              tr("Add Tag"),
                              tr("Cannot add empty tag!"),
                              QMessageBox::Ok);
         return;
     }
-    QString *tag = new QString(editNewTag->text());
+    if (strTag.contains(','))  {
+        QMessageBox::warning(this,
+                             tr("Add Tag"),
+                             tr("Tag cannot contain character ','!"),
+                             QMessageBox::Ok);
+        return;
+    }
+    QString *tag = new QString(strTag);
     linkStructure->appendTagToMainList(tag);
     addTagItem(tag, Qt::Checked);
     editNewTag->clear();
