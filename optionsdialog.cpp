@@ -7,12 +7,12 @@ OptionsDialog::OptionsDialog(QWidget *parent,
 	: QDialog(parent)
 {
     setWindowTitle(tr("Options"));
+    setMinimumWidth(600);
     
     QVBoxLayout *vboxLayout = new QVBoxLayout();
 
     QLabel *label = new QLabel(this);
     label->setObjectName(QString::fromUtf8("label"));
-    label->setGeometry(QRect(10, 10, 181, 19));
     label->setText(tr("Default web-browser:"));
 
     vboxLayout->addWidget(label);
@@ -35,7 +35,6 @@ OptionsDialog::OptionsDialog(QWidget *parent,
 
     label = new QLabel(this);
     label->setObjectName(QString::fromUtf8("label_2"));
-    label->setGeometry(QRect(10, 60, 241, 19));
     label->setText(tr("Path to database:"));
 
     vboxLayout->addWidget(label);
