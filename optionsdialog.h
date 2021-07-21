@@ -17,8 +17,8 @@
 
 class OptionsDialog : public QDialog
 {
-	Q_OBJECT
-	public:
+    Q_OBJECT
+    public:
         OptionsDialog(QWidget *parent = 0,
                       QString browser = "",
                       QString pathDb = "",
@@ -27,14 +27,14 @@ class OptionsDialog : public QDialog
         QString defaultBrowser() const { return editDefBrowser->text(); }
         QString pathToDb() const { return editPathToDB->text(); }
         bool monitoringClipboard() const { return chkMonitoringClipboard->isChecked(); }
-	private slots:
-		void okButton();
-		void browseFile();
-	private:
+    private slots:
+        void okButton();
+        void browseFile();
+    private:
         QCheckBox *chkMonitoringClipboard;
-		QDialogButtonBox *buttonBox;
-    	QPushButton *browse1;
-    	QPushButton *browse2;
+        QDialogButtonBox *buttonBox;
+        QPushButton *browse1;
+        QPushButton *browse2;
         QLineEdit *editDefBrowser;
         QLineEdit *editPathToDB;
 };

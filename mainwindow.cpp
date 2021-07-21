@@ -9,17 +9,17 @@ MainWindow::MainWindow()
     homeDir = QDir::homePath();
     linkStructure = new LinkStructure();
 
-	setWindowTitle( PROGRAM_NAME );
-	setWindowIcon(QIcon(":/images/mainwindow.png"));
-	setWindowState(Qt::WindowActive);
-	
+    setWindowTitle( PROGRAM_NAME );
+    setWindowIcon(QIcon(":/images/mainwindow.png"));
+    setWindowState(Qt::WindowActive);
+
     search = new QLineEdit(this);
     search->setClearButtonEnabled(true);
     search->setPlaceholderText(tr("Enter text to find link"));
     search->setFixedWidth(400);
     search->setToolTip(tr("Find URL by info (Ctrl+F)"));
     connect(search, SIGNAL(textEdited(QString)), this, SLOT(searchInDB(QString)));
-	
+
     urlListWidget = new QListWidget(this);
     urlListWidget->setSpacing(1);
     urlListWidget->setSelectionRectVisible(true);
@@ -27,14 +27,14 @@ MainWindow::MainWindow()
     connect(urlListWidget, SIGNAL(itemClicked(QListWidgetItem *)), this , SLOT(getInfo(QListWidgetItem *)));
     connect(urlListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this , SLOT(gotoUrl()));
     setCentralWidget(urlListWidget);
-	
-	createActions();
-	createMenu();
-	createToolBar();
-	createStatusBar();
-	createDocWindows();
+
+    createActions();
+    createMenu();
+    createToolBar();
+    createStatusBar();
+    createDocWindows();
     createTagsPopupMenu();
-	QTimer::singleShot(0, this, SLOT(initApp()));
+    QTimer::singleShot(0, this, SLOT(initApp()));
     connect(tagListWidget, SIGNAL(customContextMenuRequested(QPoint)),
                    SLOT(customMenuRequested(QPoint)));
     initMonitoringClipboard();
@@ -138,14 +138,14 @@ void MainWindow::customMenuRequested(QPoint pos)
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     if (dataEdited == true) // спрашиваем о сохранении базы если были изменения
-	{
+    {
         int ret = QMessageBox::question(this,
                                       tr("Quit from program"),
                                       tr("DataBase has been modified. Save DataBase of URL's?"),
                                       QMessageBox::Yes | QMessageBox::No);
         if (ret == QMessageBox::Yes)
-			saveDB();
-	}
+            saveDB();
+    }
 }
 
 void MainWindow::selectBrowser(QStringList args)
@@ -172,15 +172,15 @@ void MainWindow::resetList()
 void MainWindow::gotoUrl() // открываем браузер с ссылкой
 {
     if (urlListWidget->count() != 0 || urlListWidget->currentRow() != -1)
-	{
-		QStringList args;
+    {
+    QStringList args;
         args << linkStructure->urlAt(urlListWidget->currentRow())->link();
         if (!strDefBrowser.isEmpty() && (
                 this->sender() == actOpenUrl ||
                 this->sender() == actToolGoToUrl ||
                 this->sender() == urlListWidget)) // если хотим открыть в браузере по-умолчанию
         {
-			QProcess::startDetached(strDefBrowser, args);
+            QProcess::startDetached(strDefBrowser, args);
         } else {
             selectBrowser(args);
             return;
@@ -225,7 +225,7 @@ void MainWindow::searchInDB(const QString text) // метод поиска пе�
 
 void MainWindow::setSearchFocus()
 {
-	search->setFocus();
+    search->setFocus();
 }
 
 void MainWindow::createActions()
@@ -304,17 +304,17 @@ void MainWindow::createActions()
 void MainWindow::readSettings() // считываем настройки программы из конфига
 {
     if (QFile::exists(homeDir + PROGRAM_CONFIG))
-	{
+    {
         QFile textFile(homeDir + PROGRAM_CONFIG);
-		textFile.open(QIODevice::ReadOnly| QIODevice::Text);
-		QTextStream inText(&textFile);
+        textFile.open(QIODevice::ReadOnly| QIODevice::Text);
+        QTextStream inText(&textFile);
         strDefBrowser = inText.readLine(0);
         strPathToDB = inText.readLine(0);
         QString strMonitoringClipboard = inText.readLine(0);
         boolMonitoringClipboard = strMonitoringClipboard == "1";
         loadDB();
     } else {
-		Options(); // если конфига нет, то открываем диалог настроек программы
+        Options(); // если конфига нет, то открываем диалог настроек программы
     }
 }
 
@@ -334,19 +334,19 @@ void MainWindow::Options() // открываем диалог настройек
 {
     OptionsDialog *optionsDialog = new OptionsDialog(this, strDefBrowser, strPathToDB, boolMonitoringClipboard);
     if (optionsDialog->exec() == QDialog::Accepted)
-	{
+    {
         strDefBrowser = optionsDialog->defaultBrowser();
         strPathToDB = optionsDialog->pathToDb();
         boolMonitoringClipboard = optionsDialog->monitoringClipboard();
-		QDir dir(homeDir);
+        QDir dir(homeDir);
         if (dir.exists(homeDir + PROGRAM_DIR)) {
-			saveSettings();
+            saveSettings();
         } else {
             dir.mkdir(homeDir + PROGRAM_DIR);
-			saveSettings();
-		}
+            saveSettings();
+        }
         loadDB();
-	}
+    }
     delete optionsDialog;
 }
 
@@ -381,20 +381,20 @@ void MainWindow::selectByTag(QTreeWidgetItem *treeItem, int column)
 void MainWindow::delUrl() // удаляем выделенную ссылку
 {
     if (urlListWidget->currentRow() != -1 || urlListWidget->count() != 0)
-	{	
+    {
         int ret = QMessageBox::question(this,
                                         tr("Delete URL"),
                                         tr("Do you want to delete this web-link?"),
                                         QMessageBox::Yes | QMessageBox::No);
-		if (ret == QMessageBox::Yes)
-		{
+        if (ret == QMessageBox::Yes)
+        {
             int curRow = urlListWidget->currentRow();
             QListWidgetItem *curItem = urlListWidget->takeItem(curRow); // удаляем элемент из QListWidget
             urlListWidget->removeItemWidget(curItem); // удаляем элемент из QListWidgetItem
             linkStructure->removeUrlAt(curRow);
             updateWindowsTitle();
             dataEdited = true;
-		}
+        }
     } else {
         QMessageBox::warning(this,
                              tr("Delete URL"),
@@ -463,25 +463,25 @@ void MainWindow::showFavorites() // скрываем/показываем все
 
 bool MainWindow::loadDB()
 {
-	QFile textDB(strPathToDB);
+    QFile textDB(strPathToDB);
     if (textDB.open(QIODevice::ReadOnly | QIODevice::Text) == true)
-	{
+    {
         clearAllTags();
         clearUrlList();
-		// временные строки для хранения инфы
-		QString temp;
-		QString strLink;
-		QString strInfo;
+        // временные строки для хранения инфы
+        QString temp;
+        QString strLink;
+        QString strInfo;
         QString strTags;
         QList<QString*> *tempTags = new QList<QString*>();
         bool favorite = false; // инициализируем эту ф-ню
-		
+
         qDebug() << "Loading Database ...";
-		QTextStream inDB(&textDB);
-		inDB.setCodec("UTF-8");
+        QTextStream inDB(&textDB);
+        inDB.setCodec("UTF-8");
         addRootTreeItem();
         while (inDB.atEnd() != true) // пока не дочитали до конца файла
-		{
+        {
             temp = inDB.readLine(0); // читаем строку
             if (temp.startsWith("link: ")) // если встретилась ссылка
                 strLink = temp.remove(0, 6); // сохраняем ссылку
@@ -527,18 +527,18 @@ bool MainWindow::loadDB()
                 tempTags->clear();
                 addUrlItem(url);	// добавляем ссылку
             }
-		} // end while
+        } // end while
         tempTags->clear();
         delete tempTags;
         textDB.close();
         updateWindowsTitle();
         qDebug() << "Database is loaded.";
         dataEdited = false;
-		return true;
+        return true;
     } else {
         qDebug() << "Database is not loaded. Can't open file. " << strPathToDB;
         return false;
-	}
+    }
 }
 
 void MainWindow::saveDB() // сохраняем базу ссылок
@@ -660,7 +660,7 @@ void MainWindow::editUrlDialog() // обновляем измененный эл
     if (urlListWidget->count() != 0) {
         AddUrl *addUrlDialog = new AddUrl(this, urlListWidget->currentRow(), linkStructure);
         if (addUrlDialog->exec() == QDialog::Accepted)
-		{
+        {
             weburl *url = addUrlDialog->getUrl();
             updateTags(url);
             QListWidgetItem *curItem = urlListWidget->currentItem();
@@ -668,7 +668,7 @@ void MainWindow::editUrlDialog() // обновляем измененный эл
             setItemFavorite(url->isFavorite(), curItem);
             urlInfo->setPlainText(url->info());
             dataEdited = true;
-		}
+        }
         delete addUrlDialog;
     } else {
         QMessageBox::critical(this,
@@ -688,16 +688,16 @@ void MainWindow::execAddUrl() // вызов диалога добавления 
 
 void MainWindow::createToolBar()
 {
-	mainToolBar = addToolBar(tr("Main"));
-	mainToolBar->addAction(actToolAddUrl);
-	mainToolBar->addAction(actToolDelUrl);
-	mainToolBar->addAction(actToolEditUrl);
-	mainToolBar->addSeparator();
-	mainToolBar->addAction(actToolFavorite);
-	mainToolBar->addSeparator();
-	mainToolBar->addWidget(search);
-	mainToolBar->addAction(actToolGoToUrl);
-	search->addAction(actSearchUrl);
+    mainToolBar = addToolBar(tr("Main"));
+    mainToolBar->addAction(actToolAddUrl);
+    mainToolBar->addAction(actToolDelUrl);
+    mainToolBar->addAction(actToolEditUrl);
+    mainToolBar->addSeparator();
+    mainToolBar->addAction(actToolFavorite);
+    mainToolBar->addSeparator();
+    mainToolBar->addWidget(search);
+    mainToolBar->addAction(actToolGoToUrl);
+    search->addAction(actSearchUrl);
 }
 
 void MainWindow::createMenu()
@@ -705,33 +705,33 @@ void MainWindow::createMenu()
     menuUrl = menuBar()->addMenu(tr("File"));
         menuUrl->addAction(actNewDatabase);
         menuUrl->addSeparator();
-		menuUrl->addAction(actOpenUrl);
-		menuUrl->addAction(actOpenUrlWith);
-		menuUrl->addAction(actAddUrl);
-		menuUrl->addAction(actEditUrl);
-		menuUrl->addAction(actDelUrl);
-		menuUrl->addSeparator();
-		menuUrl->addAction(actExit);
-		
-	menuProgram = menuBar()->addMenu(tr("Program"));
-		menuProgram->addAction(actOptions);
-		
-	menuHelp = menuBar()->addMenu(tr("Help"));	
-		menuHelp->addAction(actAbout);
+        menuUrl->addAction(actOpenUrl);
+        menuUrl->addAction(actOpenUrlWith);
+        menuUrl->addAction(actAddUrl);
+        menuUrl->addAction(actEditUrl);
+        menuUrl->addAction(actDelUrl);
+        menuUrl->addSeparator();
+        menuUrl->addAction(actExit);
+
+    menuProgram = menuBar()->addMenu(tr("Program"));
+        menuProgram->addAction(actOptions);
+
+    menuHelp = menuBar()->addMenu(tr("Help"));
+        menuHelp->addAction(actAbout);
 }
 
 void MainWindow::createStatusBar()
 {
-	statusBar()->showMessage(tr("Welcome !!!"));
+    statusBar()->showMessage(tr("Welcome !!!"));
 }
 
 void MainWindow::createDocWindows()
 {
     QDockWidget *plainTextDoc = new QDockWidget(tr("URL information"), this);
-	plainTextDoc->setAllowedAreas(Qt::BottomDockWidgetArea);
+    plainTextDoc->setAllowedAreas(Qt::BottomDockWidgetArea);
     QWidget *widget = new QWidget();
     QVBoxLayout *vboxLayout = new QVBoxLayout();
-	urlInfo = new QTextEdit(plainTextDoc);
+    urlInfo = new QTextEdit(plainTextDoc);
     labelTags = new QLabel(plainTextDoc);
     labelTags->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     vboxLayout->addWidget(urlInfo);
@@ -740,10 +740,10 @@ void MainWindow::createDocWindows()
     widget->setLayout(vboxLayout);
 
     plainTextDoc->setWidget(widget);
-	plainTextDoc->setFeatures(QDockWidget::NoDockWidgetFeatures);
-	plainTextDoc->setMaximumHeight(170);
-	addDockWidget(Qt::BottomDockWidgetArea, plainTextDoc);
-	urlInfo->setReadOnly(true);
+    plainTextDoc->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    plainTextDoc->setMaximumHeight(170);
+    addDockWidget(Qt::BottomDockWidgetArea, plainTextDoc);
+    urlInfo->setReadOnly(true);
 
     QDockWidget *tagsDoc = new QDockWidget(tr("Tags"), this);
     tagsDoc->setAllowedAreas(Qt::LeftDockWidgetArea);
@@ -771,8 +771,8 @@ void MainWindow::createTagsPopupMenu()
 
 void MainWindow::About()
 {
-	QMessageBox::about(this, "About " + PROGRAM_NAME,
-	"<font size=14>About " + PROGRAM_NAME +"</font>"
-	"<p>program for collect web-links</p>"
-	"<br>Created by TechnoMag (C) 2009");
+    QMessageBox::about(this, "About " + PROGRAM_NAME,
+    "<font size=14>About " + PROGRAM_NAME +"</font>"
+    "<p>program for collect web-links</p>"
+    "<br>Created by TechnoMag (C) 2009");
 }

@@ -37,9 +37,9 @@
 
 class MainWindow : public QMainWindow
 {
-	Q_OBJECT
-	public:
-		MainWindow();
+    Q_OBJECT
+    public:
+        MainWindow();
         ~MainWindow();
         QTreeWidgetItem *getRoot() const;
         void setRoot(QTreeWidgetItem *value);
@@ -48,69 +48,69 @@ protected:
         void closeEvent(QCloseEvent *event);
 private slots:
         void About();
-		void execAddUrl();
-		void getInfo(QListWidgetItem *item);
+        void execAddUrl();
+        void getInfo(QListWidgetItem *item);
         void selectByTag(QTreeWidgetItem *treeItem, int column);
-		void delUrl();
-		void gotoUrl();
-		void Options();
-		void setSearchFocus();
-		void showFavorites();
-		void searchInDB(const QString text);
-		void initApp();
+        void delUrl();
+        void gotoUrl();
+        void Options();
+        void setSearchFocus();
+        void showFavorites();
+        void searchInDB(const QString text);
+        void initApp();
         void createDatabase();
         void clipboardChanged();
         void renameTag();
         void deleteTag();
         void customMenuRequested(QPoint pos);
-	private:
-		QMenu *menuUrl;
+    private:
+        QMenu *menuUrl;
             QAction *actNewDatabase;
-			QAction *actOpenUrl;
-			QAction *actOpenUrlWith;
-			QAction *actAddUrl;
-			QAction *actEditUrl;
-			QAction *actDelUrl;
-			QAction *actExit;
-		
-		QMenu *menuProgram;
-			QAction *actOptions;
-			
-		QMenu *menuHelp;
-			QAction *actAbout;
-		
-		QToolBar *mainToolBar;
-			QAction *actToolAddUrl;
-			QAction *actToolEditUrl;
-			QAction *actToolDelUrl;
-			QAction *actToolGoToUrl;
-			QAction *actSearchUrl;
-			QAction *actToolFavorite;
-			
+            QAction *actOpenUrl;
+            QAction *actOpenUrlWith;
+            QAction *actAddUrl;
+            QAction *actEditUrl;
+            QAction *actDelUrl;
+            QAction *actExit;
+
+        QMenu *menuProgram;
+            QAction *actOptions;
+
+        QMenu *menuHelp;
+            QAction *actAbout;
+
+        QToolBar *mainToolBar;
+            QAction *actToolAddUrl;
+            QAction *actToolEditUrl;
+            QAction *actToolDelUrl;
+            QAction *actToolGoToUrl;
+            QAction *actSearchUrl;
+            QAction *actToolFavorite;
+
         QListWidget *urlListWidget; // список с ссылками
         QTreeWidget *tagListWidget; // список тэгов
-		QTextEdit *urlInfo; // в нем показывается инфа о ссылке
-		QLineEdit *search; // строка ввода поиска
+        QTextEdit *urlInfo; // в нем показывается инфа о ссылке
+        QLineEdit *search; // строка ввода поиска
         QMenu *popupMenuTags;
         QLabel *labelTags;
-		
-		void createMenu();
-		void createActions();
-		void createStatusBar();
-		void createToolBar();
-		void createDocWindows();
+
+        void createMenu();
+        void createActions();
+        void createStatusBar();
+        void createToolBar();
+        void createDocWindows();
         void createTagsPopupMenu();
-		
-		void readSettings();
-		void saveSettings();
-		
-		bool loadDB();
-		void saveDB();
-		void addNewUrlDialog();
+
+        void readSettings();
+        void saveSettings();
+
+        bool loadDB();
+        void saveDB();
+        void addNewUrlDialog();
         void addUrlItem(weburl *url);
         void addTagWidgetItem(const QString &tag);
         void addWidgetItem(bool favorite, QString text);
-		void editUrlDialog();
+        void editUrlDialog();
         void clearUrlList();
 
         void selectBrowser(QStringList args);
@@ -137,8 +137,8 @@ private slots:
         QClipboard *board = nullptr;
         QString oldClipboard;
 
-		QString homeDir;
-		bool dataEdited;
+        QString homeDir;
+        bool dataEdited;
         bool isSearching = false;
 
         QTreeWidgetItem *selectedTagItem;

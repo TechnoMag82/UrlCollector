@@ -4,7 +4,7 @@ OptionsDialog::OptionsDialog(QWidget *parent,
                              QString browser,
                              QString pathDb,
                              bool monitoringClipboard)
-	: QDialog(parent)
+    : QDialog(parent)
 {
     setWindowTitle(tr("Options"));
     setMinimumWidth(600);
@@ -98,7 +98,7 @@ void OptionsDialog::browseFile()
 void OptionsDialog::okButton()
 {
     if (QFile::exists(editPathToDB->text()) == true) {
-		accept();
+        accept();
     } else {
         QMessageBox::warning(this,
                              tr("Edit program Options"),

@@ -20,14 +20,14 @@
 class AddUrl : public QDialog
 {
     Q_OBJECT
-	public:
+    public:
         AddUrl(QWidget *parent = 0, int editedRow=-1, LinkStructure *linkStructure = 0);
         weburl *getUrl();
-	private slots:
-		void OkButton();
+    private slots:
+        void OkButton();
         void addTag();
     private:
-		QDialogButtonBox *buttonBox;
+        QDialogButtonBox *buttonBox;
         QLineEdit *editWeburl;
         QLineEdit *editNewTag;
         QPushButton *buttonAddTag;

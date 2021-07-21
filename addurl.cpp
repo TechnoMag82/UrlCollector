@@ -1,9 +1,9 @@
 #include "addurl.h"
 
 AddUrl::AddUrl(QWidget *parent, int editedRow, LinkStructure *linkStructure)
-	: QDialog(parent)
+    : QDialog(parent)
 {
-	setWindowTitle(tr("Add new URL"));
+    setWindowTitle(tr("Add new URL"));
     setMinimumWidth(500);
 
     this->editedRow = editedRow;
@@ -83,7 +83,7 @@ AddUrl::AddUrl(QWidget *parent, int editedRow, LinkStructure *linkStructure)
         infourl->setPlainText(linkStructure->urlAt(editedRow)->info());
         editWeburl->setText(linkStructure->urlAt(editedRow)->link());
         if (linkStructure->isFavoriteLink(editedRow) == true) {
-    	   	chkFavorite->setCheckState(Qt::Checked);
+            chkFavorite->setCheckState(Qt::Checked);
         }
     }
     if (editedRow != -1 && linkStructure->urlAt(editedRow) != nullptr) {
@@ -111,11 +111,11 @@ weburl *AddUrl::getUrl()
 void AddUrl::OkButton()
 {
     if (editWeburl->text().length() != 0)
-	{
+    {
         if (editWeburl->text().startsWith("http://") ||
                 editWeburl->text().startsWith("www.") ||
                 editWeburl->text().startsWith("https://")) {
-			accept();
+            accept();
         } else {
             QMessageBox::warning(this,
                                  tr("add Url"),
