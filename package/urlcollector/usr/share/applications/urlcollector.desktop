@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Url Collector
+GenericName=Url Collector
+Comment=Desktop application for collect web-links
+TryExec=urlcol
+Exec=urlcol
+StartupNotify=true
+Terminal=false
+Type=Application
+Icon=urlcollector.png
+Categories=Network;
