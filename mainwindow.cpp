@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 
-const QString PROGRAM_NAME="URLCollector v1.5";
+const QString PROGRAM_NAME="URLCollector v1.6";
 const QString PROGRAM_DIR="/.urlcol";
 const QString PROGRAM_CONFIG="/.urlcol/url.config";
 
@@ -10,8 +10,15 @@ MainWindow::MainWindow()
     linkStructure = new LinkStructure();
 
     setWindowTitle( PROGRAM_NAME );
-    setWindowIcon(QIcon(":/images/mainwindow.png"));
+    QIcon windowIcon = QIcon(":/images/mainwindow.png");
+    setWindowIcon(windowIcon);
     setWindowState(Qt::WindowActive);
+
+    systemTrayIcon = new QSystemTrayIcon(windowIcon, this);
+    createTrayMenu();
+    systemTrayIcon->setVisible(true);
+    systemTrayIcon->setToolTip(PROGRAM_NAME);
+    systemTrayIcon->show();
 
     search = new QLineEdit(this);
     search->setClearButtonEnabled(true);
@@ -94,8 +101,19 @@ void MainWindow::clipboardChanged()
     {
         qDebug() << "datachanged:" <<  board->text();
         oldClipboard = board->text();
-        addUrlItem(linkStructure->addUrl(false, board->text(), tr("Added automatically")));
+        weburl *url = linkStructure->addUrl(false, board->text(), tr("Added automatically"));
+        addUrlItem(url);
+        QString *aTag = new QString(tr("Added automatically"));
+        if (!linkStructure->mainListContainsTag(*aTag)) {
+            linkStructure->appendTagToMainList(aTag);
+            addTagWidgetItem(*aTag);
+        }
+        linkStructure->addTagToUrl(url, aTag);
         dataEdited = true;
+        systemTrayIcon->showMessage("Url Collector",
+                                    QString(tr("Link %1 \nadded to databse from clipboard")).arg(board->text().left(32)),
+                                    QIcon(":/images/text-html.png"),
+                                    5000);
     }
 }
 
@@ -135,7 +153,21 @@ void MainWindow::customMenuRequested(QPoint pos)
     }
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
+void MainWindow::openApp()
+{
+    show();
+    activateWindow();
+    raise();
+    setFocus();
+    setWindowState(Qt::WindowState::WindowActive);
+}
+
+void MainWindow::quitApp()
+{
+    QApplication::quit();
+}
+
+void MainWindow::exitApp()
 {
     if (dataEdited == true) // спрашиваем о сохранении базы если были изменения
     {
@@ -146,6 +178,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
         if (ret == QMessageBox::Yes)
             saveDB();
     }
+    quitApp();
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    hide();
 }
 
 void MainWindow::selectBrowser(QStringList args)
@@ -161,7 +199,7 @@ void MainWindow::resetList()
         search->setText("");
         search->clear();
         int count = linkStructure->urlsCount();
-        for (int i = 0; i < count; i++) // пройдемся посписку
+        for (int i = 0; i < count; i++)
         {
             urlListWidget->item(i)->setHidden(false);
         }
@@ -207,7 +245,7 @@ void MainWindow::searchInDB(const QString text) // метод поиска пе�
         return;
     }
     int count = linkStructure->urlsCount();
-    for (int i = 0; i < count; i++) // пройдемся посписку
+    for (int i = 0; i < count; i++)
     {
         QListWidgetItem *item = urlListWidget->item(i);
         if (!text.isEmpty() && (
@@ -231,22 +269,22 @@ void MainWindow::setSearchFocus()
 void MainWindow::createActions()
 {
     actNewDatabase = new QAction(tr("New database ..."), this);
-    actNewDatabase->setShortcut(tr("Ctrl+N"));
+    actNewDatabase->setShortcut(QKeySequence("Ctrl+N"));
     actNewDatabase->setStatusTip(tr("Create new database"));
     connect(actNewDatabase, SIGNAL(triggered()), this, SLOT(createDatabase()));
 
     actOpenUrl = new QAction(QIcon(":/images/go-jump.png"),tr("Open URL"), this);
-    actOpenUrl->setShortcut(tr("Ctrl+O"));
+    actOpenUrl->setShortcut(QKeySequence("Ctrl+O"));
     actOpenUrl->setStatusTip(tr("Open link in web-browser."));
     connect(actOpenUrl, SIGNAL(triggered()), this, SLOT(gotoUrl()));
 
     actOpenUrlWith = new QAction(tr("Open URL with ..."), this);
-    actOpenUrlWith->setShortcut(tr("Alt+O"));
+    actOpenUrlWith->setShortcut(QKeySequence("Alt+O"));
     actOpenUrlWith->setStatusTip(tr("Open link in other web-browser."));
     connect(actOpenUrlWith, SIGNAL(triggered()), this, SLOT(gotoUrl()));
 
     actAddUrl = new QAction(QIcon(":/images/list-add.png"), tr("Add URL ..."), this);
-    actAddUrl->setShortcut(tr("Ctrl+A"));
+    actAddUrl->setShortcut(QKeySequence("Ctrl+A"));
     actAddUrl->setStatusTip(tr("Add new URL in list."));
     connect(actAddUrl, SIGNAL(triggered()), this, SLOT(execAddUrl()));
 
@@ -263,7 +301,7 @@ void MainWindow::createActions()
     connect(actToolGoToUrl, SIGNAL(triggered()), this, SLOT(gotoUrl()));
 
     actToolFavorite = new QAction(QIcon(":/images/toolbar/emblem-favorite.png"), tr("Show only favorite links. (Alt+F)"), this);
-    actToolFavorite->setShortcut(tr("Alt+F"));
+    actToolFavorite->setShortcut(QKeySequence("Alt+F"));
     actToolFavorite->setStatusTip(tr("Show only favorite links from base."));
     actToolFavorite->setCheckable(true);
     connect(actToolFavorite, SIGNAL(triggered()), this, SLOT(showFavorites()));
@@ -273,26 +311,26 @@ void MainWindow::createActions()
     connect(actToolEditUrl, SIGNAL(triggered()), this, SLOT(execAddUrl()));
 
     actEditUrl = new QAction(QIcon(":/images/accessories-text-editor.png"), tr("Edit URL ..."), this);
-    actEditUrl->setShortcut(tr("Ctrl+E"));
+    actEditUrl->setShortcut(QKeySequence("Ctrl+E"));
     actEditUrl->setStatusTip(tr("Edit data about URL."));
     connect(actEditUrl, SIGNAL(triggered()), this, SLOT(execAddUrl()));
 
     actDelUrl = new QAction(QIcon(":/images/list-remove.png"), tr("Delete URL"), this);
-    actDelUrl->setShortcut(tr("Ctrl+D"));
+    actDelUrl->setShortcut(QKeySequence("Ctrl+D"));
     actDelUrl->setStatusTip(tr("Delete URL from list."));
     connect(actDelUrl, SIGNAL(triggered()), this , SLOT(delUrl()));
 
     actSearchUrl = new QAction(this); // при нажатии на Ctrl+F активирует строку ввода для поиска ссылок
-    actSearchUrl->setShortcut(tr("Ctrl+F"));
+    actSearchUrl->setShortcut(QKeySequence("Ctrl+F"));
     connect(actSearchUrl, SIGNAL(triggered()), this, SLOT(setSearchFocus()));
 
     actExit = new QAction(QIcon(":/images/application-exit.png"), tr("Exit"), this);
-    actExit->setShortcut(tr("Alt+X"));
+    actExit->setShortcut(QKeySequence("Alt+X"));
     actExit->setStatusTip(tr("Close program."));
-    connect(actExit, SIGNAL(triggered()), SLOT(close()));
+    connect(actExit, SIGNAL(triggered()), SLOT(exitApp()));
 
     actOptions = new QAction(tr("Options ..."), this);
-    actOptions->setShortcut(tr("Ctrl+P"));
+    actOptions->setShortcut(QKeySequence("Ctrl+P"));
     actOptions->setStatusTip(tr("program options."));
     connect(actOptions, SIGNAL(triggered()), SLOT(Options()));
 
@@ -441,6 +479,24 @@ void MainWindow::updateWindowsTitle()
     QString temp;
     setWindowTitle(PROGRAM_NAME + " [" + QFileInfo(strPathToDB).fileName() +
                    "] - elements in DB " + temp.setNum(linkStructure->urlsCount(), 10) );
+}
+
+void MainWindow::changeEvent(QEvent *e)
+{
+    switch (e->type())
+    {
+        case QEvent::WindowStateChange:
+        {
+            if (this->windowState() & Qt::WindowMinimized)
+            {
+                hide();
+            }
+            break;
+        }
+        default:
+            break;
+    }
+    QMainWindow::changeEvent(e);
 }
 
 void MainWindow::showFavorites() // скрываем/показываем все избранные ссылки
@@ -688,7 +744,7 @@ void MainWindow::execAddUrl() // вызов диалога добавления 
 
 void MainWindow::createToolBar()
 {
-    mainToolBar = addToolBar(tr("Main"));
+    mainToolBar = addToolBar("Main");
     mainToolBar->addAction(actToolAddUrl);
     mainToolBar->addAction(actToolDelUrl);
     mainToolBar->addAction(actToolEditUrl);
@@ -767,6 +823,21 @@ void MainWindow::createTagsPopupMenu()
     action = new QAction(tr("Delete tag"), this);
     popupMenuTags->addAction(action);
     connect(action, &QAction::triggered, this, &MainWindow::deleteTag);
+}
+
+void MainWindow::createTrayMenu()
+{
+    QMenu *trayMenu = new QMenu(this);
+
+    QAction* action = new QAction(tr("Open Url Collector"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(openApp()));
+    trayMenu->addAction(action);
+
+    action = new QAction(tr("Quit"), this);
+    connect(action, SIGNAL(triggered()), this, SLOT(quitApp()));
+    trayMenu->addAction(action);
+
+    systemTrayIcon->setContextMenu(trayMenu);
 }
 
 void MainWindow::About()

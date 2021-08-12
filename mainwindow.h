@@ -26,6 +26,8 @@
 #include <QStatusBar>
 #include <QDockWidget>
 #include <QInputDialog>
+#include <QSystemTrayIcon>
+#include <QApplication>
 
 #include <stdlib.h>
 #include <time.h>
@@ -44,9 +46,11 @@ class MainWindow : public QMainWindow
         QTreeWidgetItem *getRoot() const;
         void setRoot(QTreeWidgetItem *value);
 
-protected:
+    protected:
         void closeEvent(QCloseEvent *event);
-private slots:
+        void changeEvent(QEvent* e);
+
+    private slots:
         void About();
         void execAddUrl();
         void getInfo(QListWidgetItem *item);
@@ -63,6 +67,10 @@ private slots:
         void renameTag();
         void deleteTag();
         void customMenuRequested(QPoint pos);
+        void openApp();
+        void quitApp();
+        void exitApp();
+
     private:
         QMenu *menuUrl;
             QAction *actNewDatabase;
@@ -93,6 +101,7 @@ private slots:
         QLineEdit *search; // строка ввода поиска
         QMenu *popupMenuTags;
         QLabel *labelTags;
+        QSystemTrayIcon *systemTrayIcon;
 
         void createMenu();
         void createActions();
@@ -100,6 +109,7 @@ private slots:
         void createToolBar();
         void createDocWindows();
         void createTagsPopupMenu();
+        void createTrayMenu();
 
         void readSettings();
         void saveSettings();

@@ -115,7 +115,9 @@ weburl *LinkStructure::addUrl(bool favorite, QString link, QString info)
 
 void LinkStructure::addTagToUrl(weburl *url, QString *tag)
 {
-    url->addTag(tag);
+    if (!url->containsTag(*tag)) {
+        url->addTag(tag);
+    }
 }
 
 QList<QString *> *LinkStructure::getTagsOfUrl(int i)
