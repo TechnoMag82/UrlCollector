@@ -3,7 +3,8 @@
 OptionsDialog::OptionsDialog(QWidget *parent,
                              QString browser,
                              QString pathDb,
-                             bool monitoringClipboard)
+                             bool monitoringClipboard,
+                             int autosaveInterval)
     : QDialog(parent)
 {
     setWindowTitle(tr("Options"));
@@ -58,6 +59,34 @@ OptionsDialog::OptionsDialog(QWidget *parent,
     chkMonitoringClipboard->setToolTip(tr("Turn ON monotoring clipboard for automatically add URL to database"));
     chkMonitoringClipboard->setChecked(monitoringClipboard);
 
+    hboxLayout = new QHBoxLayout();
+
+    label = new QLabel(this);
+    label->setObjectName(QString::fromUtf8("label_3"));
+    label->setText(tr("Autosave every "));
+
+    hboxLayout->addWidget(label);
+
+    spinAutosave = new QSpinBox(this);
+    spinAutosave->setObjectName("spin_1");
+    spinAutosave->setToolTip(tr("To turn OFF autosave setup 0 minutes interval"));
+    spinAutosave->setToolTipDuration(7000);
+    spinAutosave->setFixedWidth(60);
+    spinAutosave->setAlignment(Qt::AlignRight);
+    spinAutosave->setMaximum(15);
+    spinAutosave->setMinimum(0);
+    spinAutosave->setValue(autosaveInterval);
+
+    hboxLayout->addWidget(spinAutosave);
+
+    label = new QLabel(this);
+    label->setObjectName(QString::fromUtf8("label_4"));
+    label->setText(tr("minutes"));
+
+    hboxLayout->addWidget(label);
+
+    vboxLayout->addLayout(hboxLayout);
+
     buttonBox = new QDialogButtonBox(this);
     buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
     buttonBox->setOrientation(Qt::Horizontal);
@@ -69,16 +98,6 @@ OptionsDialog::OptionsDialog(QWidget *parent,
     vboxLayout->addWidget(buttonBox);
 
     setLayout(vboxLayout);
-}
-
-OptionsDialog::~OptionsDialog()
-{
-    delete chkMonitoringClipboard;
-    delete buttonBox;
-    delete browse1;
-    delete browse2;
-    delete editDefBrowser;
-    delete editPathToDB;
 }
 
 void OptionsDialog::browseFile()

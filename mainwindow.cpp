@@ -41,7 +41,7 @@ MainWindow::MainWindow()
     createStatusBar();
     createDocWindows();
     createTagsPopupMenu();
-    QTimer::singleShot(0, this, SLOT(initApp()));
+    initApp();
     connect(tagListWidget, SIGNAL(customContextMenuRequested(QPoint)),
                    SLOT(customMenuRequested(QPoint)));
     initMonitoringClipboard();
@@ -179,6 +179,14 @@ void MainWindow::exitApp()
             saveDB();
     }
     quitApp();
+}
+
+void MainWindow::autosaveDB()
+{
+    if (autosaveInterval > 0) {
+        qDebug() << "Save DB by timer";
+        saveDB();
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -350,6 +358,9 @@ void MainWindow::readSettings() // считываем настройки про�
         strPathToDB = inText.readLine(0);
         QString strMonitoringClipboard = inText.readLine(0);
         boolMonitoringClipboard = strMonitoringClipboard == "1";
+        bool ok;
+        autosaveInterval = inText.readLine(0).toInt(&ok, 10);
+        restartAutosaveTimer();
         loadDB();
     } else {
         Options(); // если конфига нет, то открываем диалог настроек программы
@@ -359,23 +370,57 @@ void MainWindow::readSettings() // считываем настройки про�
 void MainWindow::saveSettings() // сохраняем настройки программы в конфиг
 {
     QFile textFile(homeDir + PROGRAM_CONFIG);
-    textFile.open(QIODevice::WriteOnly| QIODevice::Text| QIODevice::Truncate);
+    textFile.open(QIODevice::WriteOnly| QIODevice::Text | QIODevice::Truncate);
     QTextStream outText(&textFile);
     outText.setCodec("UFT-8");
     outText << strDefBrowser << endl;
     outText << strPathToDB << endl;
     outText << boolMonitoringClipboard << endl;
+    outText << autosaveInterval << endl;
     dataEdited = false;
+}
+
+void MainWindow::restartAutosaveTimer()
+{
+    if (autosaveInterval > 0) {
+        if (autosaveTimer == nullptr) {
+            autosaveTimer = new QTimer(this);
+            connect(autosaveTimer, SIGNAL(timeout()), SLOT(autosaveDB()));
+        }
+    } else {
+        if (autosaveTimer != nullptr) {
+            qDebug() << "Stop autosave timer";
+            autosaveTimer->stop();
+            delete autosaveTimer;
+            autosaveTimer = nullptr;
+        }
+    }
+    if (autosaveTimer != nullptr) {
+        qDebug() << "Restart timer with interval" << autosaveInterval << "minutes";
+        autosaveTimer->stop();
+        autosaveTimer->start(autosaveInterval * 60000);
+    }
 }
 
 void MainWindow::Options() // открываем диалог настройек
 {
-    OptionsDialog *optionsDialog = new OptionsDialog(this, strDefBrowser, strPathToDB, boolMonitoringClipboard);
+    OptionsDialog *optionsDialog = new OptionsDialog(this,
+                                                     strDefBrowser,
+                                                     strPathToDB,
+                                                     boolMonitoringClipboard,
+                                                     autosaveInterval);
     if (optionsDialog->exec() == QDialog::Accepted)
     {
         strDefBrowser = optionsDialog->defaultBrowser();
-        strPathToDB = optionsDialog->pathToDb();
         boolMonitoringClipboard = optionsDialog->monitoringClipboard();
+        if (strPathToDB.compare(optionsDialog->pathToDb()) != 0) {
+            strPathToDB = optionsDialog->pathToDb();
+            loadDB();
+        }
+        if (autosaveInterval != optionsDialog->autosaveInterval()) {
+            autosaveInterval = optionsDialog->autosaveInterval();
+            restartAutosaveTimer();
+        }
         QDir dir(homeDir);
         if (dir.exists(homeDir + PROGRAM_DIR)) {
             saveSettings();
@@ -383,7 +428,6 @@ void MainWindow::Options() // открываем диалог настройек
             dir.mkdir(homeDir + PROGRAM_DIR);
             saveSettings();
         }
-        loadDB();
     }
     delete optionsDialog;
 }

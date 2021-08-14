@@ -14,6 +14,7 @@
 #include <QCheckBox>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QSpinBox>
 
 class OptionsDialog : public QDialog
 {
@@ -22,10 +23,11 @@ class OptionsDialog : public QDialog
         OptionsDialog(QWidget *parent = 0,
                       QString browser = "",
                       QString pathDb = "",
-                      bool monitoringClipboard = false);
-        ~OptionsDialog();
+                      bool monitoringClipboard = false,
+                      int autosaveInterval = 0);
         QString defaultBrowser() const { return editDefBrowser->text(); }
         QString pathToDb() const { return editPathToDB->text(); }
+        int autosaveInterval() const { return spinAutosave->value(); }
         bool monitoringClipboard() const { return chkMonitoringClipboard->isChecked(); }
     private slots:
         void okButton();
@@ -37,6 +39,7 @@ class OptionsDialog : public QDialog
         QPushButton *browse2;
         QLineEdit *editDefBrowser;
         QLineEdit *editPathToDB;
+        QSpinBox *spinAutosave;
 };
 
 #endif

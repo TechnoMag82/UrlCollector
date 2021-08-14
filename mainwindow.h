@@ -70,6 +70,7 @@ class MainWindow : public QMainWindow
         void openApp();
         void quitApp();
         void exitApp();
+        void autosaveDB();
 
     private:
         QMenu *menuUrl;
@@ -113,6 +114,7 @@ class MainWindow : public QMainWindow
 
         void readSettings();
         void saveSettings();
+        void restartAutosaveTimer();
 
         bool loadDB();
         void saveDB();
@@ -143,6 +145,9 @@ class MainWindow : public QMainWindow
         QString strDefBrowser;
         QString strPathToDB;
         bool boolMonitoringClipboard = false;
+        int autosaveInterval = 0;
+
+        QTimer *autosaveTimer = nullptr;
 
         QClipboard *board = nullptr;
         QString oldClipboard;
