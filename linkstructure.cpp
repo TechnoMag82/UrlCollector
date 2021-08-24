@@ -171,3 +171,35 @@ QString LinkStructure::tagsAt(int i)
     }
     return strTags;
 }
+
+QString LinkStructure::trimLink(const QString link)
+{
+    QString temp = link;
+    if (temp.startsWith("https://")) {
+        temp = temp.remove("https://");
+    }
+    if (temp.startsWith("www.")) {
+        temp = temp.remove("www.");
+    }
+    if (temp.startsWith("http://")) {
+        temp = temp.remove("http://");
+    }
+    if (temp.endsWith('/')) {
+        int last = temp.lastIndexOf('/');
+        temp = temp.remove(last, 1);
+    }
+    return temp;
+}
+
+bool LinkStructure::isLinkExists(QString link)
+{
+    QString originLink = trimLink(link);
+    int count = listUrl->size();
+    for (int i = 0; i < count; i++) {
+        QString comparedLink = trimLink(listUrl->at(i)->link());
+        if (comparedLink.compare(originLink) == 0) {
+            return true;
+        }
+    }
+    return false;
+}

@@ -110,22 +110,31 @@ weburl *AddUrl::getUrl()
 
 void AddUrl::OkButton()
 {
-    if (editWeburl->text().length() != 0)
+    if (editWeburl->text().length() == 0)
     {
-        if (editWeburl->text().startsWith("http://") ||
-                editWeburl->text().startsWith("www.") ||
-                editWeburl->text().startsWith("https://")) {
-            accept();
-        } else {
-            QMessageBox::warning(this,
-                                 tr("add Url"),
-                                 tr("Web-Link is not correct!"),
-                                 QMessageBox::Ok);
-        }
-    } else {
         QMessageBox::warning(this,
                              tr("Add Url"),
                              tr("You must write web-link to cite!"),
+                             QMessageBox::Ok);
+        editWeburl->setFocus();
+        return;
+    }
+    if (linkStructure->isLinkExists(editWeburl->text())) {
+        QMessageBox::warning(this,
+                             tr("add Url"),
+                             tr("Web-Link is exsists in DB!"),
+                             QMessageBox::Ok);
+        editWeburl->setFocus();
+        return;
+    }
+    if (editWeburl->text().startsWith("http://") ||
+            editWeburl->text().startsWith("www.") ||
+            editWeburl->text().startsWith("https://")) {
+        accept();
+    } else {
+        QMessageBox::warning(this,
+                             tr("add Url"),
+                             tr("Web-Link is not correct!"),
                              QMessageBox::Ok);
         editWeburl->setFocus();
     }

@@ -30,6 +30,7 @@ class LinkStructure
         void appendTagToMainList(QString *tag);
 
         weburl *urlAt(int i);
+        bool isLinkExists(QString link);
         weburl* addUrl(bool favorite, QString link, QString info);
         void addTagToUrl(weburl *url, QString *tag);
         QList<QString*> * getTagsOfUrl(int i);
@@ -39,6 +40,8 @@ class LinkStructure
     private:
         QList<weburl*> *listUrl = nullptr;
         QList<QString*> *allTags = nullptr;
+        QString trimLink(const QString link);
+
 };
 
 #endif // LINKSTRUCTURE_H

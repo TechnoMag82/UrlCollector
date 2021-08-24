@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 
-const QString PROGRAM_NAME="URLCollector v1.6";
+const QString PROGRAM_NAME="URLCollector v1.7";
 const QString PROGRAM_DIR="/.urlcol";
 const QString PROGRAM_CONFIG="/.urlcol/url.config";
 
@@ -8,12 +8,29 @@ MainWindow::MainWindow()
 {
     homeDir = QDir::homePath();
     linkStructure = new LinkStructure();
-
+    readSettings();
+    if (settings.windowPosition.x() > -1) {
+        setGeometry(settings.windowPosition.x(),
+                    settings.windowPosition.y(),
+                    settings.windowPosition.width(),
+                    settings.windowPosition.height());
+    } else {
+        QDesktopWidget *widget = QApplication::desktop();
+        int height = widget->screenGeometry().height();
+        int width = widget->screenGeometry().width();
+        int x = (width - 800) / 2.0;
+        int y = (height - 600) / 2.0;
+        setGeometry(x, y, 800, 600);
+    }
     setWindowTitle( PROGRAM_NAME );
     QIcon windowIcon = QIcon(":/images/mainwindow.png");
     setWindowIcon(windowIcon);
-    setWindowState(Qt::WindowActive);
-
+    if (settings.windowVisible) {
+        setWindowState(Qt::WindowActive);
+    } else {
+        setWindowState(Qt::WindowMinimized);
+        hide();
+    }
     systemTrayIcon = new QSystemTrayIcon(windowIcon, this);
     createTrayMenu();
     systemTrayIcon->setVisible(true);
@@ -57,7 +74,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::initApp()
 {
-    readSettings();
+    restartAutosaveTimer();
+    if (settings.strPathToDB.isEmpty() == false && QFile::exists(settings.strPathToDB)) {
+        loadDB();
+    } else {
+        Options(); // если конфига нет, то открываем диалог настроек программы
+    }
 }
 
 void MainWindow::createDatabase()
@@ -67,10 +89,10 @@ void MainWindow::createDatabase()
         if (!pathToNewDB.endsWith(".ucl")) {
             pathToNewDB.append(".ucl");
         }
-        strPathToDB = pathToNewDB;
-        if (QFile::exists(strPathToDB) == false) // если файл не существует то создаем пустую базу
+        settings.strPathToDB = pathToNewDB;
+        if (QFile::exists(settings.strPathToDB) == false) // если файл не существует то создаем пустую базу
         {
-            QFile file(strPathToDB);
+            QFile file(settings.strPathToDB);
             file.open(QIODevice::WriteOnly | QIODevice::Text);
             file.close();
         }
@@ -85,7 +107,7 @@ void MainWindow::createDatabase()
 
 void MainWindow::clipboardChanged()
 {
-    if (boolMonitoringClipboard == false) {
+    if (settings.boolMonitoringClipboard == false) {
         return;
     }
 
@@ -94,6 +116,7 @@ void MainWindow::clipboardChanged()
     }
 
     if (oldClipboard != board->text() &&
+            linkStructure->isLinkExists(board->text()) == false &&
         (board->text().startsWith("https://") ||
          board->text().startsWith("http://") ||
          board->text().startsWith("www.")
@@ -164,6 +187,7 @@ void MainWindow::openApp()
 
 void MainWindow::quitApp()
 {
+    saveSettings();
     QApplication::quit();
 }
 
@@ -183,7 +207,7 @@ void MainWindow::exitApp()
 
 void MainWindow::autosaveDB()
 {
-    if (autosaveInterval > 0) {
+    if (settings.autosaveInterval > 0) {
         qDebug() << "Save DB by timer";
         saveDB();
     }
@@ -221,12 +245,12 @@ void MainWindow::gotoUrl() // открываем браузер с ссылко�
     {
     QStringList args;
         args << linkStructure->urlAt(urlListWidget->currentRow())->link();
-        if (!strDefBrowser.isEmpty() && (
+        if (!settings.strDefBrowser.isEmpty() && (
                 this->sender() == actOpenUrl ||
                 this->sender() == actToolGoToUrl ||
                 this->sender() == urlListWidget)) // если хотим открыть в браузере по-умолчанию
         {
-            QProcess::startDetached(strDefBrowser, args);
+            QProcess::startDetached(settings.strDefBrowser, args);
         } else {
             selectBrowser(args);
             return;
@@ -244,7 +268,7 @@ void MainWindow::gotoUrl() // открываем браузер с ссылко�
 
 void MainWindow::searchInDB(const QString text) // метод поиска первого эл-та с подстрокой text
 {
-    if (strPathToDB.isEmpty())
+    if (settings.strPathToDB.isEmpty())
         return;
     if (text.isEmpty()) {
         resetList();
@@ -347,24 +371,38 @@ void MainWindow::createActions()
     connect(actAbout, SIGNAL(triggered()), this, SLOT(About()));
 }
 
-void MainWindow::readSettings() // считываем настройки программы из конфига
+bool MainWindow::readSettings() // считываем настройки программы из конфига
 {
-    if (QFile::exists(homeDir + PROGRAM_CONFIG))
-    {
+    if (QFile::exists(homeDir + PROGRAM_CONFIG)) {
         QFile textFile(homeDir + PROGRAM_CONFIG);
         textFile.open(QIODevice::ReadOnly| QIODevice::Text);
         QTextStream inText(&textFile);
-        strDefBrowser = inText.readLine(0);
-        strPathToDB = inText.readLine(0);
+        settings.strDefBrowser = inText.readLine(0);
+        settings.strPathToDB = inText.readLine(0);
         QString strMonitoringClipboard = inText.readLine(0);
-        boolMonitoringClipboard = strMonitoringClipboard == "1";
+        settings.boolMonitoringClipboard = strMonitoringClipboard == "1";
         bool ok;
-        autosaveInterval = inText.readLine(0).toInt(&ok, 10);
-        restartAutosaveTimer();
-        loadDB();
-    } else {
-        Options(); // если конфига нет, то открываем диалог настроек программы
+        settings.autosaveInterval = inText.readLine(0).toInt(&ok, 10);
+        QStringList windowPositions = inText.readLine(0).split(' ');
+        if (!windowPositions.isEmpty() && windowPositions.size() == 4) {
+            settings.windowPosition.setX(windowPositions.at(0).toInt(&ok, 10));
+            if (settings.windowPosition.x() < 0) {
+                settings.windowPosition.setX(0);
+            }
+            if (settings.windowPosition.x() < 0) {
+                settings.windowPosition.setY(0);
+            }
+            settings.windowPosition.setY(windowPositions.at(1).toInt(&ok, 10));
+            settings.windowPosition.setWidth(windowPositions.at(2).toInt(&ok, 10));
+            settings.windowPosition.setHeight(windowPositions.at(3).toInt(&ok, 10));
+        }
+        if (inText.readLine(0).startsWith("window-visible")) {
+            settings.windowVisible = true;
+        }
+        textFile.close();
+        return true;
     }
+    return false;
 }
 
 void MainWindow::saveSettings() // сохраняем настройки программы в конфиг
@@ -373,16 +411,23 @@ void MainWindow::saveSettings() // сохраняем настройки про�
     textFile.open(QIODevice::WriteOnly| QIODevice::Text | QIODevice::Truncate);
     QTextStream outText(&textFile);
     outText.setCodec("UFT-8");
-    outText << strDefBrowser << endl;
-    outText << strPathToDB << endl;
-    outText << boolMonitoringClipboard << endl;
-    outText << autosaveInterval << endl;
+    outText << settings.strDefBrowser << endl;
+    outText << settings.strPathToDB << endl;
+    outText << settings.boolMonitoringClipboard << endl;
+    outText << settings.autosaveInterval << endl;
+    outText << QString::number(this->geometry().x()) << ' '
+            << QString::number(this->geometry().y()) << ' '
+            << QString::number(this->geometry().width()) << ' '
+            << QString::number(this->geometry().height()) << endl;
+    if (isVisible()) {
+        outText << "window-visible" << endl;
+    }
     dataEdited = false;
 }
 
 void MainWindow::restartAutosaveTimer()
 {
-    if (autosaveInterval > 0) {
+    if (settings.autosaveInterval > 0) {
         if (autosaveTimer == nullptr) {
             autosaveTimer = new QTimer(this);
             connect(autosaveTimer, SIGNAL(timeout()), SLOT(autosaveDB()));
@@ -396,29 +441,29 @@ void MainWindow::restartAutosaveTimer()
         }
     }
     if (autosaveTimer != nullptr) {
-        qDebug() << "Restart timer with interval" << autosaveInterval << "minutes";
+        qDebug() << "Restart timer with interval" << settings.autosaveInterval << "minutes";
         autosaveTimer->stop();
-        autosaveTimer->start(autosaveInterval * 60000);
+        autosaveTimer->start(settings.autosaveInterval * 60000);
     }
 }
 
 void MainWindow::Options() // открываем диалог настройек
 {
     OptionsDialog *optionsDialog = new OptionsDialog(this,
-                                                     strDefBrowser,
-                                                     strPathToDB,
-                                                     boolMonitoringClipboard,
-                                                     autosaveInterval);
+                                                     settings.strDefBrowser,
+                                                     settings.strPathToDB,
+                                                     settings.boolMonitoringClipboard,
+                                                     settings.autosaveInterval);
     if (optionsDialog->exec() == QDialog::Accepted)
     {
-        strDefBrowser = optionsDialog->defaultBrowser();
-        boolMonitoringClipboard = optionsDialog->monitoringClipboard();
-        if (strPathToDB.compare(optionsDialog->pathToDb()) != 0) {
-            strPathToDB = optionsDialog->pathToDb();
+        settings.strDefBrowser = optionsDialog->defaultBrowser();
+        settings.boolMonitoringClipboard = optionsDialog->monitoringClipboard();
+        if (settings.strPathToDB.compare(optionsDialog->pathToDb()) != 0) {
+            settings.strPathToDB = optionsDialog->pathToDb();
             loadDB();
         }
-        if (autosaveInterval != optionsDialog->autosaveInterval()) {
-            autosaveInterval = optionsDialog->autosaveInterval();
+        if (settings.autosaveInterval != optionsDialog->autosaveInterval()) {
+            settings.autosaveInterval = optionsDialog->autosaveInterval();
             restartAutosaveTimer();
         }
         QDir dir(homeDir);
@@ -440,7 +485,7 @@ void MainWindow::getInfo(QListWidgetItem *item) // получаем информ
 
 void MainWindow::selectByTag(QTreeWidgetItem *treeItem, int column)
 {
-    if (strPathToDB.isEmpty())
+    if (settings.strPathToDB.isEmpty())
         return;
     int count = linkStructure->urlsCount();
     bool isAllTags = treeItem->text(0) == tr("All tags");
@@ -521,7 +566,7 @@ void MainWindow::updateTags(weburl *url)
 void MainWindow::updateWindowsTitle()
 {
     QString temp;
-    setWindowTitle(PROGRAM_NAME + " [" + QFileInfo(strPathToDB).fileName() +
+    setWindowTitle(PROGRAM_NAME + " [" + QFileInfo(settings.strPathToDB).fileName() +
                    "] - elements in DB " + temp.setNum(linkStructure->urlsCount(), 10) );
 }
 
@@ -545,7 +590,7 @@ void MainWindow::changeEvent(QEvent *e)
 
 void MainWindow::showFavorites() // скрываем/показываем все избранные ссылки
 {
-    if (strPathToDB.isEmpty())
+    if (settings.strPathToDB.isEmpty())
         return;
     int count = linkStructure->urlsCount();
     for (int i = 0; i < count; i++) // пройдемся посписку
@@ -563,7 +608,7 @@ void MainWindow::showFavorites() // скрываем/показываем все
 
 bool MainWindow::loadDB()
 {
-    QFile textDB(strPathToDB);
+    QFile textDB(settings.strPathToDB);
     if (textDB.open(QIODevice::ReadOnly | QIODevice::Text) == true)
     {
         clearAllTags();
@@ -636,14 +681,14 @@ bool MainWindow::loadDB()
         dataEdited = false;
         return true;
     } else {
-        qDebug() << "Database is not loaded. Can't open file. " << strPathToDB;
+        qDebug() << "Database is not loaded. Can't open file. " << settings.strPathToDB;
         return false;
     }
 }
 
 void MainWindow::saveDB() // сохраняем базу ссылок
 {
-    linkStructure->saveDB(strPathToDB);
+    linkStructure->saveDB(settings.strPathToDB);
 }
 
 void MainWindow::addUrlItem(weburl *url)
@@ -735,7 +780,7 @@ void MainWindow::addWidgetItem(bool favorite, QString text) // добавляе�
 
 void MainWindow::addNewUrlDialog() // добавляем ссылку в список
 {
-    if (!strPathToDB.isEmpty()) {
+    if (!settings.strPathToDB.isEmpty()) {
         resetList(); // вернемся к исходному списку
         AddUrl *addUrlDialog = new AddUrl(this, -1, linkStructure);
         if (addUrlDialog->exec() == QDialog::Accepted)

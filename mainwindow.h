@@ -28,6 +28,7 @@
 #include <QInputDialog>
 #include <QSystemTrayIcon>
 #include <QApplication>
+#include <QDesktopWidget>
 
 #include <stdlib.h>
 #include <time.h>
@@ -36,6 +37,15 @@
 #include "addurl.h"
 #include "optionsdialog.h"
 #include "linkstructure.h"
+
+struct Settings {
+    QString strDefBrowser;
+    QString strPathToDB;
+    bool boolMonitoringClipboard = false;
+    int autosaveInterval = 0;
+    QRect windowPosition = QRect(-1, -1, -1, -1);
+    bool windowVisible = false;
+};
 
 class MainWindow : public QMainWindow
 {
@@ -112,7 +122,7 @@ class MainWindow : public QMainWindow
         void createTagsPopupMenu();
         void createTrayMenu();
 
-        void readSettings();
+        bool readSettings();
         void saveSettings();
         void restartAutosaveTimer();
 
@@ -142,10 +152,7 @@ class MainWindow : public QMainWindow
         LinkStructure *linkStructure = nullptr;
 
         // Options
-        QString strDefBrowser;
-        QString strPathToDB;
-        bool boolMonitoringClipboard = false;
-        int autosaveInterval = 0;
+        Settings settings;
 
         QTimer *autosaveTimer = nullptr;
 
