@@ -1,12 +1,9 @@
 #include "mainwindow.h"
 
-const QString PROGRAM_NAME="URLCollector v1.7";
-const QString PROGRAM_DIR="/.urlcol";
-const QString PROGRAM_CONFIG="/.urlcol/url.config";
-
 MainWindow::MainWindow()
 {
     homeDir = QDir::homePath();
+    createLockFile();
     linkStructure = new LinkStructure();
     readSettings();
     if (settings.windowPosition.x() > -1) {
@@ -188,6 +185,7 @@ void MainWindow::openApp()
 void MainWindow::quitApp()
 {
     saveSettings();
+    removeLockFile();
     QApplication::quit();
 }
 
@@ -211,6 +209,21 @@ void MainWindow::autosaveDB()
         qDebug() << "Save DB by timer";
         saveDB();
     }
+}
+
+void MainWindow::createLockFile()
+{
+    if (!QFile::exists(QDir::homePath() + LOCK_FILE)) {
+        lockFile = new QFile(QDir::homePath() + LOCK_FILE);
+        lockFile->open(QIODevice::WriteOnly);
+        lockFile->flush();
+    }
+}
+
+void MainWindow::removeLockFile()
+{
+    lockFile->close();
+    QFile::remove(QDir::homePath() + LOCK_FILE);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

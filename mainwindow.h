@@ -37,6 +37,7 @@
 #include "addurl.h"
 #include "optionsdialog.h"
 #include "linkstructure.h"
+#include "consts.h"
 
 struct Settings {
     QString strDefBrowser;
@@ -114,6 +115,9 @@ class MainWindow : public QMainWindow
         QLabel *labelTags;
         QSystemTrayIcon *systemTrayIcon;
 
+        void createLockFile();
+        void removeLockFile();
+
         void createMenu();
         void createActions();
         void createStatusBar();
@@ -167,6 +171,7 @@ class MainWindow : public QMainWindow
         int selectedTagIndex = -1;
 
         QTreeWidgetItem *rootTagsItem = nullptr;
+        QFile *lockFile = nullptr;
 };
 
 #endif
