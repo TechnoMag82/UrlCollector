@@ -119,7 +119,7 @@ void AddUrl::OkButton()
         editWeburl->setFocus();
         return;
     }
-    if (linkStructure->isLinkExists(editWeburl->text())) {
+    if (editedRow == -1 && linkStructure->isLinkExists(editWeburl->text())) {
         QMessageBox::warning(this,
                              tr("add Url"),
                              tr("Web-Link is exsists in DB!"),
