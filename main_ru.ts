@@ -98,91 +98,91 @@
         <translation type="obsolete">Выберите файл базы данных</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="84"/>
+        <location filename="mainwindow.cpp" line="89"/>
         <source>Select file of DataBase</source>
         <translation type="unfinished">Выберите файл базы данных</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="99"/>
+        <location filename="mainwindow.cpp" line="104"/>
         <source>Options</source>
         <translation type="unfinished">Настройки</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="100"/>
+        <location filename="mainwindow.cpp" line="105"/>
         <source>Created new DataBese!</source>
         <translation type="unfinished">Новая база дыннх создана!</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="124"/>
-        <location filename="mainwindow.cpp" line="126"/>
+        <location filename="mainwindow.cpp" line="129"/>
+        <location filename="mainwindow.cpp" line="131"/>
         <source>Added automatically</source>
         <translation type="unfinished">Добавлена автоматически</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="134"/>
+        <location filename="mainwindow.cpp" line="139"/>
         <source>Link %1 
 added to databse from clipboard</source>
         <translation type="unfinished">Ссылка %1 \nдобавлена в базу из буфера обмена</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="143"/>
-        <location filename="mainwindow.cpp" line="922"/>
+        <location filename="mainwindow.cpp" line="148"/>
+        <location filename="mainwindow.cpp" line="945"/>
         <source>Rename tag</source>
         <translation type="unfinished">Переименовать метку</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="144"/>
+        <location filename="mainwindow.cpp" line="149"/>
         <source>New tag name:</source>
         <translation type="unfinished">Название новой метки:</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="156"/>
-        <location filename="mainwindow.cpp" line="925"/>
+        <location filename="mainwindow.cpp" line="161"/>
+        <location filename="mainwindow.cpp" line="948"/>
         <source>Delete tag</source>
         <translation type="unfinished">Удалить метку</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="157"/>
+        <location filename="mainwindow.cpp" line="162"/>
         <source>Delete tag &apos;%1&apos; from all links?</source>
         <translation type="unfinished">Удалить метку &apos;%1&apos; из всех ссылок?</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="197"/>
+        <location filename="mainwindow.cpp" line="211"/>
         <source>Quit from program</source>
         <translation type="unfinished">Выход из программы</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="198"/>
+        <location filename="mainwindow.cpp" line="212"/>
         <source>DataBase has been modified. Save DataBase of URL&apos;s?</source>
         <translation type="unfinished">База данных изменена. Сохранить изменения?</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="236"/>
+        <location filename="mainwindow.cpp" line="278"/>
         <source>Select browser</source>
         <translation type="unfinished">Выберите web-браузер</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="276"/>
+        <location filename="mainwindow.cpp" line="318"/>
         <source>Open link.</source>
         <translation type="unfinished">Открыть ссылку.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="277"/>
+        <location filename="mainwindow.cpp" line="319"/>
         <source>List is empty</source>
         <translation type="unfinished">Список пуст</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="316"/>
+        <location filename="mainwindow.cpp" line="358"/>
         <source>New database ...</source>
         <translation type="unfinished">Создать новую базу данных ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="318"/>
+        <location filename="mainwindow.cpp" line="360"/>
         <source>Create new database</source>
         <translation type="unfinished">Создать новую базу данных</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="321"/>
+        <location filename="mainwindow.cpp" line="363"/>
         <source>Open URL</source>
         <translation type="unfinished">Открыть ссылку</translation>
     </message>
@@ -191,35 +191,35 @@ added to databse from clipboard</source>
         <translation type="obsolete">Открыть URL в web-броузере.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="326"/>
+        <location filename="mainwindow.cpp" line="368"/>
         <source>Open URL with ...</source>
         <translation type="unfinished">Открыть ссылку с помощью ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="328"/>
+        <location filename="mainwindow.cpp" line="370"/>
         <source>Open link in other web-browser.</source>
         <translation type="unfinished">Открыть ссылку в другом браузере.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="331"/>
-        <location filename="mainwindow.cpp" line="336"/>
+        <location filename="mainwindow.cpp" line="373"/>
+        <location filename="mainwindow.cpp" line="378"/>
         <source>Add URL ...</source>
         <translation type="unfinished">Добавить ссылку ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="333"/>
-        <location filename="mainwindow.cpp" line="337"/>
+        <location filename="mainwindow.cpp" line="375"/>
+        <location filename="mainwindow.cpp" line="379"/>
         <source>Add new URL in list.</source>
         <translation type="unfinished">Добавить ссылку.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="340"/>
+        <location filename="mainwindow.cpp" line="382"/>
         <source>Delete URL ...</source>
         <translation type="unfinished">Удалить ссылку ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="341"/>
-        <location filename="mainwindow.cpp" line="365"/>
+        <location filename="mainwindow.cpp" line="383"/>
+        <location filename="mainwindow.cpp" line="407"/>
         <source>Delete URL from list.</source>
         <translation type="unfinished">Удалить ссылку из базы.</translation>
     </message>
@@ -228,7 +228,7 @@ added to databse from clipboard</source>
         <translation type="obsolete">Открыть ссылку в браузере по-умолчанию...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="345"/>
+        <location filename="mainwindow.cpp" line="387"/>
         <source>Open URL in with default web-browser.</source>
         <translation type="unfinished">Просмотреть ссылку с помощью браузера по-умолчанию.</translation>
     </message>
@@ -237,147 +237,167 @@ added to databse from clipboard</source>
         <translation type="obsolete">Показать только избранные ссылки.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="323"/>
+        <location filename="mainwindow.cpp" line="365"/>
         <source>Open link in web-browser.</source>
         <translation type="unfinished">Открыть ссылку в браузере.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="344"/>
+        <location filename="mainwindow.cpp" line="386"/>
         <source>Open URL with default web-browser. (Ctrl+O)</source>
         <translation type="unfinished">Открыть ссылку в браузере по-умолчанию. (Ctrl+O)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="348"/>
+        <location filename="mainwindow.cpp" line="390"/>
         <source>Show only favorite links. (Alt+F)</source>
         <translation type="unfinished">Показать только избранные ссылки. (Alt+F)</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="350"/>
+        <location filename="mainwindow.cpp" line="392"/>
         <source>Show only favorite links from base.</source>
         <translation type="unfinished">Показать только избранные ссылки из базы.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="354"/>
+        <location filename="mainwindow.cpp" line="396"/>
         <source>Edit data about URL ...</source>
         <translation type="unfinished">Редактировать данные о ссылке ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="355"/>
-        <location filename="mainwindow.cpp" line="360"/>
-        <location filename="mainwindow.cpp" line="833"/>
+        <location filename="mainwindow.cpp" line="397"/>
+        <location filename="mainwindow.cpp" line="402"/>
+        <location filename="mainwindow.cpp" line="856"/>
         <source>Edit data about URL.</source>
         <translation type="unfinished">Редактировать данные о URL.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="358"/>
+        <location filename="mainwindow.cpp" line="400"/>
         <source>Edit URL ...</source>
         <translation type="unfinished">Редактировать ссылку ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="363"/>
-        <location filename="mainwindow.cpp" line="526"/>
-        <location filename="mainwindow.cpp" line="540"/>
+        <location filename="mainwindow.cpp" line="405"/>
+        <location filename="mainwindow.cpp" line="568"/>
+        <location filename="mainwindow.cpp" line="582"/>
         <source>Delete URL</source>
         <translation type="unfinished">Удалить ссылку</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="372"/>
+        <location filename="mainwindow.cpp" line="414"/>
         <source>Exit</source>
         <translation type="unfinished">Выход</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="374"/>
+        <location filename="mainwindow.cpp" line="416"/>
         <source>Close program.</source>
         <translation type="unfinished">Закрыть программу.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="377"/>
+        <location filename="mainwindow.cpp" line="419"/>
         <source>Options ...</source>
         <translation type="unfinished">Настройки ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="379"/>
+        <location filename="mainwindow.cpp" line="421"/>
         <source>program options.</source>
         <translation type="unfinished">Настройки программы.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="382"/>
+        <location filename="mainwindow.cpp" line="424"/>
         <source>About ...</source>
         <translation type="unfinished">О программе ...</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="383"/>
+        <location filename="mainwindow.cpp" line="425"/>
         <source>About URL Collector.</source>
         <translation type="unfinished">О URL Collector.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="504"/>
-        <location filename="mainwindow.cpp" line="741"/>
+        <location filename="mainwindow.cpp" line="546"/>
+        <location filename="mainwindow.cpp" line="783"/>
         <source>All tags</source>
         <translation type="unfinished">Все метки</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="527"/>
+        <location filename="mainwindow.cpp" line="569"/>
         <source>Do you want to delete this web-link?</source>
         <translation type="unfinished">Вы хотите удалить эту ссылку?</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="541"/>
+        <location filename="mainwindow.cpp" line="583"/>
         <source>No selected items</source>
         <translation type="unfinished">Нет выбранных ссылок</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="810"/>
+        <location filename="mainwindow.cpp" line="833"/>
         <source>Edit database</source>
         <translation type="unfinished">Редактирование базы данных</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="811"/>
+        <location filename="mainwindow.cpp" line="834"/>
         <source>Database is not opened!</source>
         <translation type="unfinished">База данных не открыта!</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="834"/>
+        <location filename="mainwindow.cpp" line="857"/>
         <source>List is empty!</source>
         <translation type="unfinished">Список пустой!</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="863"/>
+        <location filename="mainwindow.cpp" line="886"/>
         <source>File</source>
         <translation type="unfinished">Файл</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="874"/>
+        <location filename="mainwindow.cpp" line="897"/>
         <source>Program</source>
         <translation type="unfinished">Программа</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="877"/>
+        <location filename="mainwindow.cpp" line="900"/>
         <source>Help</source>
         <translation type="unfinished">Помощь</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="883"/>
+        <location filename="mainwindow.cpp" line="906"/>
         <source>Welcome !!!</source>
         <translation type="unfinished">Добро пожаловать !!!</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="888"/>
+        <location filename="mainwindow.cpp" line="911"/>
         <source>URL information</source>
         <translation type="unfinished">Информация о ссылке</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="906"/>
+        <location filename="mainwindow.cpp" line="929"/>
         <source>Tags</source>
         <translation type="unfinished">Метки</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="934"/>
+        <location filename="mainwindow.cpp" line="957"/>
+        <source>Copy link to clipboard</source>
+        <translation type="unfinished">Копировать ссылку в буфер обмена</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="961"/>
+        <source>Edit link...</source>
+        <translation type="unfinished">Редактировать ссылку...</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="965"/>
+        <source>is Favorite</source>
+        <translation type="unfinished">Избранная ссылка</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="970"/>
+        <source>Delete link</source>
+        <translation type="unfinished">Удалить ссылку</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="979"/>
         <source>Open Url Collector</source>
         <translation type="unfinished">Открыть Url Collector</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="938"/>
+        <location filename="mainwindow.cpp" line="983"/>
         <source>Quit</source>
         <translation type="unfinished">Выход</translation>
     </message>

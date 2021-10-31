@@ -16,6 +16,7 @@
         <file>images/toolbar/edit-find.png</file>
         <file>images/toolbar/accessories-text-editor.png</file>
         <file>images/toolbar/emblem-favorite.png</file>
+        <file>images/tag.png</file>
     </qresource>
     <qresource prefix="/translations">
         <file>main_ru.qm</file>

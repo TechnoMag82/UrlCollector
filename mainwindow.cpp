@@ -55,9 +55,14 @@ MainWindow::MainWindow()
     createStatusBar();
     createDocWindows();
     createTagsPopupMenu();
+    createUrlListPopupMenu();
     initApp();
+
     connect(tagListWidget, SIGNAL(customContextMenuRequested(QPoint)),
                    SLOT(customMenuRequested(QPoint)));
+    connect(urlListWidget, SIGNAL(customContextMenuRequested(QPoint)),
+                   SLOT(customMenuRequested(QPoint)));
+
     initMonitoringClipboard();
 }
 
@@ -165,11 +170,24 @@ void MainWindow::deleteTag()
 
 void MainWindow::customMenuRequested(QPoint pos)
 {
-    if (popupMenuTags != nullptr) {
-        selectedTagItem = tagListWidget->itemAt(pos);
+    if (this->sender() == tagListWidget && popupMenuTags != nullptr) {
         QModelIndex item = tagListWidget->indexAt(pos);
         selectedTagIndex = item.row();
-        popupMenuTags->popup(tagListWidget->viewport()->mapToGlobal(pos));
+        if (selectedTagIndex != -1) {
+            selectedTagItem = tagListWidget->itemAt(pos);
+            popupMenuTags->popup(tagListWidget->viewport()->mapToGlobal(pos));
+        }
+    }
+
+    if (this->sender() == urlListWidget && popupMenuUrlList != nullptr) {
+        QModelIndex item = urlListWidget->indexAt(pos);
+        selectedUrlIndex = item.row();
+        if (selectedUrlIndex != -1) {
+            selectedUrlItem = urlListWidget->itemAt(pos);
+            weburl *url = linkStructure->urlAt(selectedUrlIndex);
+            actPopupIsFavorite->setChecked(url->isFavorite());
+            popupMenuUrlList->popup(urlListWidget->viewport()->mapToGlobal(pos));
+        }
     }
 }
 
@@ -209,6 +227,34 @@ void MainWindow::autosaveDB()
         qDebug() << "Save DB by timer";
         saveDB();
     }
+}
+
+void MainWindow::copyLinkToClipboard()
+{
+    bool oldValue = settings.boolMonitoringClipboard;
+    settings.boolMonitoringClipboard = false;
+    weburl *url = linkStructure->urlAt(selectedUrlIndex);
+    QClipboard* clipboard = QApplication::clipboard();
+    clipboard->setText(url->link());
+    settings.boolMonitoringClipboard = oldValue;
+}
+
+void MainWindow::setFavoriteLink()
+{
+    weburl *url = linkStructure->urlAt(selectedUrlIndex);
+    url->setFavorite(!url->isFavorite());
+    setItemFavorite(url->isFavorite(), selectedUrlItem);
+    dataEdited = true;
+}
+
+void MainWindow::editLink()
+{
+    editUrlDialog();
+}
+
+void MainWindow::deleteLink()
+{
+    delUrl();
 }
 
 void MainWindow::createLockFile()
@@ -713,7 +759,7 @@ void MainWindow::addTagWidgetItem(const QString &tag)
 {
     QTreeWidgetItem *newItem = new QTreeWidgetItem();
     newItem->setText(0, tag);
-    newItem->setBackground(0, QBrush(randomColor(), Qt::SolidPattern));
+    newItem->setIcon(0, QIcon(":/images/tag.png"));
     rootTagsItem->addChild(newItem);
 }
 
@@ -743,25 +789,6 @@ void MainWindow::addRootTreeItem()
     } else {
         rootTagsItem->takeChildren().clear();
     }
-}
-
-QColor MainWindow::randomColor()
-{
-    QString uuid = QUuid::createUuid().toString();
-    bool ok;
-    int r = uuid.mid(1, 2).toInt(&ok, 16);
-    int g = uuid.mid(3, 2).toInt(&ok, 16);
-    int b = uuid.mid(5, 2).toInt(&ok, 16);
-    if (r < 100) {
-        r += 150;
-    }
-    if (g < 100) {
-        g += 150;
-    }
-    if (b < 100) {
-        b += 150;
-    }
-    return QColor(r, g, b);
 }
 
 void MainWindow::clearAllTags()
@@ -925,6 +952,28 @@ void MainWindow::createTagsPopupMenu()
     action = new QAction(tr("Delete tag"), this);
     popupMenuTags->addAction(action);
     connect(action, &QAction::triggered, this, &MainWindow::deleteTag);
+}
+
+void MainWindow::createUrlListPopupMenu() {
+    urlListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    popupMenuUrlList = new QMenu(this);
+    QAction *action = new QAction(tr("Copy link to clipboard"), this);
+    popupMenuUrlList->addAction(action);
+    connect(action, &QAction::triggered, this, &MainWindow::copyLinkToClipboard);
+
+    action = new QAction(tr("Edit link..."), this);
+    popupMenuUrlList->addAction(action);
+    connect(action, &QAction::triggered, this, &MainWindow::editLink);
+
+    actPopupIsFavorite = new QAction(tr("is Favorite"), this);
+    actPopupIsFavorite->setCheckable(true);
+    popupMenuUrlList->addAction(actPopupIsFavorite);
+    connect(actPopupIsFavorite, &QAction::triggered, this, &MainWindow::setFavoriteLink);
+
+    action = new QAction(tr("Delete link"), this);
+    popupMenuUrlList->addAction(action);
+    connect(action, &QAction::triggered, this, &MainWindow::deleteLink);
 }
 
 void MainWindow::createTrayMenu()

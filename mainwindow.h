@@ -30,9 +30,6 @@
 #include <QApplication>
 #include <QDesktopWidget>
 
-#include <stdlib.h>
-#include <time.h>
-
 #include "weburl.h"
 #include "addurl.h"
 #include "optionsdialog.h"
@@ -83,6 +80,11 @@ class MainWindow : public QMainWindow
         void exitApp();
         void autosaveDB();
 
+        void copyLinkToClipboard();
+        void setFavoriteLink();
+        void editLink();
+        void deleteLink();
+
     private:
         QMenu *menuUrl;
             QAction *actNewDatabase;
@@ -112,6 +114,8 @@ class MainWindow : public QMainWindow
         QTextEdit *urlInfo; // в нем показывается инфа о ссылке
         QLineEdit *search; // строка ввода поиска
         QMenu *popupMenuTags;
+        QMenu *popupMenuUrlList;
+            QAction *actPopupIsFavorite;
         QLabel *labelTags;
         QSystemTrayIcon *systemTrayIcon;
 
@@ -124,6 +128,7 @@ class MainWindow : public QMainWindow
         void createToolBar();
         void createDocWindows();
         void createTagsPopupMenu();
+        void createUrlListPopupMenu();
         void createTrayMenu();
 
         bool readSettings();
@@ -144,8 +149,6 @@ class MainWindow : public QMainWindow
         void setItemFavorite(bool favorite, QListWidgetItem *newItem);
         void initMonitoringClipboard();
         void addRootTreeItem();
-
-        QColor randomColor();
 
         void clearAllTags();
         bool treeContainTag(const QString &tag);
@@ -168,7 +171,9 @@ class MainWindow : public QMainWindow
         bool isSearching = false;
 
         QTreeWidgetItem *selectedTagItem;
+        QListWidgetItem *selectedUrlItem;
         int selectedTagIndex = -1;
+        int selectedUrlIndex = -1;
 
         QTreeWidgetItem *rootTagsItem = nullptr;
         QFile *lockFile = nullptr;
