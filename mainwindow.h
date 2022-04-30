@@ -79,6 +79,7 @@ class MainWindow : public QMainWindow
         void quitApp();
         void exitApp();
         void autosaveDB();
+        void saveAll();
 
         void copyLinkToClipboard();
         void setFavoriteLink();
@@ -93,6 +94,7 @@ class MainWindow : public QMainWindow
             QAction *actAddUrl;
             QAction *actEditUrl;
             QAction *actDelUrl;
+            QAction *actSaveAll;
             QAction *actExit;
 
         QMenu *menuProgram;

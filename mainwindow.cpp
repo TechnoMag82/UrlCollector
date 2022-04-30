@@ -229,6 +229,11 @@ void MainWindow::autosaveDB()
     }
 }
 
+void MainWindow::saveAll()
+{
+    saveDB();
+}
+
 void MainWindow::copyLinkToClipboard()
 {
     bool oldValue = settings.boolMonitoringClipboard;
@@ -368,6 +373,11 @@ void MainWindow::createActions()
     actOpenUrl->setShortcut(QKeySequence("Ctrl+O"));
     actOpenUrl->setStatusTip(tr("Open link in web-browser."));
     connect(actOpenUrl, SIGNAL(triggered()), this, SLOT(gotoUrl()));
+
+    actSaveAll = new QAction(tr("Save all"), this);
+    actSaveAll->setShortcut(QKeySequence("Ctrl+S"));
+    actSaveAll->setStatusTip(tr("Save all DB"));
+    connect(actSaveAll, SIGNAL(triggered()), this, SLOT(saveAll()));
 
     actOpenUrlWith = new QAction(tr("Open URL with ..."), this);
     actOpenUrlWith->setShortcut(QKeySequence("Alt+O"));
@@ -747,7 +757,11 @@ bool MainWindow::loadDB()
 
 void MainWindow::saveDB() // сохраняем базу ссылок
 {
-    linkStructure->saveDB(settings.strPathToDB);
+    if (!settings.strPathToDB.isEmpty() && dataEdited == true) {
+        qDebug() << "Save DB";
+        linkStructure->saveDB(settings.strPathToDB);
+        dataEdited = false;
+    }
 }
 
 void MainWindow::addUrlItem(weburl *url)
@@ -896,6 +910,7 @@ void MainWindow::createMenu()
         menuUrl->addAction(actEditUrl);
         menuUrl->addAction(actDelUrl);
         menuUrl->addSeparator();
+        menuUrl->addAction(actSaveAll);
         menuUrl->addAction(actExit);
 
     menuProgram = menuBar()->addMenu(tr("Program"));
