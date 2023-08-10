@@ -34,6 +34,7 @@
 #include "addurl.h"
 #include "optionsdialog.h"
 #include "linkstructure.h"
+#include "urlitemdelegate.h"
 #include "consts.h"
 
 struct Settings {
@@ -142,13 +143,13 @@ class MainWindow : public QMainWindow
         void addNewUrlDialog();
         void addUrlItem(weburl *url);
         void addTagWidgetItem(const QString &tag);
-        void addWidgetItem(bool favorite, QString text);
+        void addWidgetItem(/*bool favorite, QString text*/weburl *url);
         void editUrlDialog();
         void clearUrlList();
 
         void selectBrowser(QStringList args);
         void resetList();
-        void setItemFavorite(bool favorite, QListWidgetItem *newItem);
+//        void setItemFavorite(bool favorite, QListWidgetItem *newItem);
         void initMonitoringClipboard();
         void addRootTreeItem();
 

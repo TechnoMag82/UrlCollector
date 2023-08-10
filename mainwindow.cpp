@@ -42,6 +42,9 @@ MainWindow::MainWindow()
     connect(search, SIGNAL(textEdited(QString)), this, SLOT(searchInDB(QString)));
 
     urlListWidget = new QListWidget(this);
+    UrlItemDelegate *itemDelegate = new UrlItemDelegate(urlListWidget);
+    itemDelegate->setLinks(linkStructure);
+    urlListWidget->setItemDelegate(itemDelegate);
     urlListWidget->setSpacing(1);
     urlListWidget->setSelectionRectVisible(true);
     urlListWidget->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -248,7 +251,6 @@ void MainWindow::setFavoriteLink()
 {
     weburl *url = linkStructure->urlAt(selectedUrlIndex);
     url->setFavorite(!url->isFavorite());
-    setItemFavorite(url->isFavorite(), selectedUrlItem);
     dataEdited = true;
 }
 
@@ -766,7 +768,7 @@ void MainWindow::saveDB() // сохраняем базу ссылок
 
 void MainWindow::addUrlItem(weburl *url)
 {
-    addWidgetItem(url->isFavorite(), url->link());
+    addWidgetItem(url);
 }
 
 void MainWindow::addTagWidgetItem(const QString &tag)
@@ -775,17 +777,6 @@ void MainWindow::addTagWidgetItem(const QString &tag)
     newItem->setText(0, tag);
     newItem->setIcon(0, QIcon(":/images/tag.png"));
     rootTagsItem->addChild(newItem);
-}
-
-void MainWindow::setItemFavorite(bool favorite, QListWidgetItem *newItem) // настрока вида элемента
-{
-    if (favorite == true) {
-        newItem->setBackground(QBrush(QColor(249, 251, 205), Qt::SolidPattern));
-        newItem->setIcon(QIcon(":/images/bookmark-new.png"));
-    } else {
-        newItem->setIcon(QIcon(":/images/text-html.png"));
-        newItem->setBackground(QBrush(QColor(205, 240, 251), Qt::SolidPattern));
-    }
 }
 
 void MainWindow::initMonitoringClipboard()
@@ -824,11 +815,9 @@ void MainWindow::setRoot(QTreeWidgetItem *value)
     rootTagsItem = value;
 }
 
-void MainWindow::addWidgetItem(bool favorite, QString text) // добавляем виджет эелмента в список
+void MainWindow::addWidgetItem(weburl *url) // добавляем виджет эелмента в список
 {
-    QListWidgetItem *newItem = new QListWidgetItem;
-    newItem->setText(text);
-    setItemFavorite(favorite, newItem);
+    QListWidgetItem *newItem = new QListWidgetItem();
     urlListWidget->addItem(newItem);
 }
 
@@ -864,7 +853,6 @@ void MainWindow::editUrlDialog() // обновляем измененный эл
             updateTags(url);
             QListWidgetItem *curItem = urlListWidget->currentItem();
             curItem->setText(url->link());
-            setItemFavorite(url->isFavorite(), curItem);
             urlInfo->setPlainText(url->info());
             dataEdited = true;
         }

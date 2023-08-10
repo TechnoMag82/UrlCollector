@@ -4,6 +4,7 @@
 #include <QString>
 #include <QSet>
 #include <QList>
+#include <QMetaType>
 
 class weburl
 {
@@ -34,5 +35,7 @@ class weburl
         QList<QString*> *tags = nullptr;
         bool infavorite;
 };
+
+Q_DECLARE_METATYPE(weburl)
 
 #endif
